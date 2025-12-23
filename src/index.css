@@ -1,0 +1,21 @@
+:root {
+  /* --main-color: #0050b3; */
+  --main-color: #096dd9;
+  --text-color: #111;
+  --text-color-1: #111;
+  --text-color-3: #333;
+  --text-color-5: #555;
+  --text-color-9: #999;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  height: 100%;
+  margin: 0;
+  background-color: #f4f4f4;
+}
+#root {
+  height: 100%;
+}
