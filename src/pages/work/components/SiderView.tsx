@@ -11,7 +11,7 @@ const SiderContainer = styled.div`
   left: 0;
   background-color: #eee;
 `;
-export const Sider = () => {
+export const SiderView = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const queryData = () => {
     api.QueryUserGroup({}).then((res) => {

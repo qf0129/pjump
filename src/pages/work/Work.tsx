@@ -1,11 +1,11 @@
-import { Sider } from "./components/Sider";
-import { Tabs } from "./components/Tabs";
+import { SiderView } from "./components/SiderView";
+import { TabView } from "./components/TabView";
 
 export const Work = () => {
   return (
     <div style={{ height: "100vh" }}>
-      <Sider />
-      <Tabs />
+      <SiderView />
+      <TabView />
     </div>
   );
 };
