@@ -4,14 +4,19 @@ import { Tabs, type TabsProps } from "antd";
 import { Term } from "./Term";
 
 const TabsContainer = styled.div`
-  padding-left: 200px;
+  padding-left: 240px;
   height: 100%;
 `;
 
 const Tabss = styled(Tabs)`
-  background-color: #333a33;
+  /* background-color: #333a33; */
   .ant-tabs-content {
     height: 100% !important;
+    background-color: var(--term-body-bg-1) !important;
+  }
+  .ant-tabs-nav {
+    background-color: var(--term-header-bg) !important;
+    border-left: 1px solid var(--term-body-bg-1) !important;
   }
   .ant-tabs-nav::before {
     content: none !important;

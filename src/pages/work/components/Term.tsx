@@ -15,7 +15,7 @@ export const Term = () => {
       fontFamily: 'monaco, Consolas, "Lucida Console", monospace',
       rightClickSelectsWord: true,
       theme: {
-        background: "#1e1e1e",
+        background: "#212121",
         foreground: "#d4d4d4",
       },
     });
@@ -31,7 +31,7 @@ export const Term = () => {
       // 调整终端大小以适应容器
       fitAddon.fit();
       // 向终端写入消息
-      terminal.write("Welcome to React Xterm.js Terminal!\r\n");
+      terminal.write("Welcome to terminal!\r\n");
       terminal.write("$ ");
     }
 
@@ -52,5 +52,5 @@ export const Term = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return <div ref={terminalContainerRef} style={{ width: "100%", height: "100%", padding: 8, backgroundColor: "#1e1e1e" }} />;
+  return <div ref={terminalContainerRef} style={{ width: "100%", height: "100%", padding: 8 }} />;
 };

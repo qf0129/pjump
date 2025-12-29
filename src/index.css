@@ -6,6 +6,10 @@
   --text-color-3: #333;
   --text-color-5: #555;
   --text-color-9: #999;
+  --term-header-bg: #333a33;
+  --term-body-bg-1: #212121;
+  --term-body-bg-2: #2f2a2a;
+  --term-body-bg-3: #3f3a3a;
 }
 
 * {
