@@ -26,12 +26,20 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
         const client = new Guacamole.Client(tunnel);
         clientRef.current = client;
 
-        // Attach display
+        // Attach display — let Guacamole size it to match the remote
+        // desktop. Flexbox on the container handles centering.
         const display = client.getDisplay();
         const displayEl = display.getElement();
-        displayEl.style.width = "100%";
-        displayEl.style.height = "100%";
-        displayEl.style.background = "transparent";
+
+        // Guacamole Display sets canvas z-index to -1 (so the software
+        // cursor layer can sit above it).  This buries the canvas behind
+        // any ancestor with a background.  Override to 0 — the cursor
+        // layer (z-index: 1) still renders on top correctly.
+        const fixStyle = document.createElement("style");
+        fixStyle.textContent = ".rdp-canvas-fix canvas { z-index: 0 !important; }";
+        document.head.appendChild(fixStyle);
+        displayEl.classList.add("rdp-canvas-fix");
+
         if (containerRef.current) {
           containerRef.current.innerHTML = "";
           containerRef.current.appendChild(displayEl);
@@ -103,6 +111,8 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
         return () => {
           clearTimeout(sizeTimer);
           resizeObserver.disconnect();
+          document.head.removeChild(fixStyle);
+          displayEl.classList.remove("rdp-canvas-fix");
           client.disconnect();
           tunnel.disconnect();
         };
@@ -124,8 +134,18 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
   }, [hostUid]);
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <div ref={containerRef} style={{ width: "100%", height: "100%", overflow: "hidden" }} />
+    <div style={{ width: "100%", height: "100%", background: "#000" }}>
+      <div
+        ref={containerRef}
+        style={{
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      />
     </div>
   );
 }
