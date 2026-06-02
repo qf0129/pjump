@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // RDP Tab component using Guacamole
 interface RDPTabProps {
@@ -9,6 +9,7 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tunnelRef = useRef<Guacamole.Tunnel>(null);
   const clientRef = useRef<Guacamole.Client>(null);
+  const [connecting, setConnecting] = useState(true);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -94,7 +95,10 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
           }
         };
 
-        client.onsync = sendDisplaySize;
+        client.onsync = () => {
+          setConnecting(false);
+          sendDisplaySize();
+        };
         const sizeTimer = setTimeout(sendDisplaySize, 1000);
 
         // Connect
@@ -134,7 +138,16 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
   }, [hostUid]);
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#000" }}>
+    <div style={{ width: "100%", height: "100%", background: "#000", position: "relative" }}>
+      {connecting && (
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 1,
+          display: "flex", justifyContent: "center", alignItems: "center",
+          color: "#aaa", fontSize: 16, pointerEvents: "none",
+        }}>
+          正在连接...
+        </div>
+      )}
       <div
         ref={containerRef}
         style={{
