@@ -24,13 +24,14 @@ export type Group = BaseModel & {
     OsUsers?: OsUser[]
 }
 
+
 export type Host = BaseModel & {
     Name?: string
     Ip?: string
     Os?: string
-    SshPort?: number
-    RdpPort?: number
-    OsUsers?: OsUser[]
+    Port: number;
+    Protocol: string;
+    User: string;
 }
 
 export type OsUser = User & {

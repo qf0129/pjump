@@ -18,13 +18,17 @@ const GroupRow = styled(Flex)`
   }
 `;
 
-const HostRow = styled(Flex)`
-  padding: 5px 4px;
-  padding-left: 20px;
+const HostRow = styled.div`
+  padding: 5px 16px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   user-select: none;
   color: #eee;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: normal;
 
   &:hover {
     background-color: var(--term-body-bg-3);
@@ -38,10 +42,21 @@ const Empty = styled(Flex)`
   color: #666;
 `;
 
-export const HostGroup = ({ group }: { group: Group }) => {
+type HostGroupProps = {
+  group: Group;
+  onSelectHost?: (host: Host) => void;
+};
+
+export const HostGroup = ({ group, onSelectHost }: HostGroupProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [hosts, setHosts] = useState<Host[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const selectHost = (host: Host) => {
+    if (onSelectHost) {
+      onSelectHost(host);
+    }
+  };
 
   const expandGroup = () => {
     if (expanded) {
@@ -86,7 +101,19 @@ export const HostGroup = ({ group }: { group: Group }) => {
         <Flex flex={1}>{group.Name}</Flex>
         {getRightIcon()}
       </GroupRow>
-      {expanded && <div>{hosts.length > 0 ? hosts.map((host) => <HostRow key={host.Uid}>{host.Name}</HostRow>) : <Empty>NoData</Empty>}</div>}
+      {expanded && (
+        <div>
+          {hosts.length > 0 ? (
+            hosts.map((host) => (
+              <HostRow onClick={() => selectHost(host)} key={host.Uid}>
+                {host.Name}
+              </HostRow>
+            ))
+          ) : (
+            <Empty>NoData</Empty>
+          )}
+        </div>
+      )}
     </HostGroupContainer>
   );
 };

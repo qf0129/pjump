@@ -1,5 +1,5 @@
 import api from "@/apis/api";
-import type { Group } from "@/utils/type";
+import type { Group, Host } from "@/utils/type";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { HostGroup } from "./HostGroup";
@@ -22,7 +22,11 @@ const SiderHeader = styled.div`
   align-items: center;
   padding: 0 8px;
 `;
-export const SiderView = () => {
+
+type SiderViewProps = {
+  onSelectHost?: (host: Host) => void;
+};
+export const SiderView = ({ onSelectHost }: SiderViewProps) => {
   const [groups, setGroups] = useState<Group[]>([]);
   const queryData = () => {
     api.QueryUserGroup({}).then((res) => {
@@ -41,7 +45,7 @@ export const SiderView = () => {
     <SiderContainer>
       <SiderHeader>MyGroups</SiderHeader>
       {groups.map((group) => (
-        <HostGroup key={group.Uid} group={group} />
+        <HostGroup key={group.Uid} group={group} onSelectHost={onSelectHost} />
       ))}
     </SiderContainer>
   );

@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router";
@@ -24,11 +23,9 @@ const renderEmpty: GetProp<typeof ConfigProvider, "renderEmpty"> = () => {
 
 const router = createBrowserRouter(routes);
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ConfigProvider theme={customTheme} renderEmpty={renderEmpty}>
-      <App>
-        <RouterProvider router={router} />
-      </App>
-    </ConfigProvider>
-  </StrictMode>
+  <ConfigProvider theme={customTheme} renderEmpty={renderEmpty}>
+    <App style={{ height: "100%" }}>
+      <RouterProvider router={router} />
+    </App>
+  </ConfigProvider>,
 );

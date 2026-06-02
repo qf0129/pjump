@@ -1,17 +1,15 @@
 import { Navigate, type RouteObject } from "react-router";
 import { RootLayout } from "./layouts/RootLayout";
-import { SignIn } from "./pages/public/SignIn";
-import { Work } from "./pages/work/Work";
-import { Console } from "./pages/console/Console";
+import Home from "./pages/personal/home";
+import Client from "./pages/personal/client";
 
 export const routes: RouteObject[] = [
-  { index: true, element: <Navigate to="/work" replace /> },
+  { index: true, element: <Navigate to="/home" replace /> },
   {
     element: <RootLayout />,
     children: [
-      { path: "signin", element: <SignIn /> },
-      { path: "work", element: <Work /> },
-      { path: "console", element: <Console /> },
+      { path: "home", element: <Home /> },
+      { path: "client/:uid", element: <Client /> },
     ],
   },
 ];

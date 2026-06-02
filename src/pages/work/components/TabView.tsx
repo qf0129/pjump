@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import React, { useRef, useState } from "react";
+import React, { useImperativeHandle, useRef, useState } from "react";
 import { Tabs, type TabsProps } from "antd";
 import { Term } from "./Term";
+import type { Host } from "@/utils/type";
 
 const TabsContainer = styled.div`
   padding-left: 240px;
@@ -29,10 +30,12 @@ const Tabss = styled(Tabs)`
   }
   .ant-tabs-tab-remove {
     color: #ccc;
+    :hover {
+      color: white !important;
+    }
   }
-  .ant-tabs-nav-add {
-    color: #fff !important;
-    border: none !important;
+  .ant-tabs-nav-more {
+    color: white !important;
   }
 `;
 
@@ -53,20 +56,30 @@ const stylesObject: TabsProps["styles"] = {
   root: { height: "100%" },
 };
 
-export const TabView = () => {
+export interface TabViewRef {
+  addTab: (host: Host) => void;
+}
+
+type TabViewProps = {
+  ref: React.Ref<TabViewRef>;
+};
+
+export const TabView = ({ ref }: TabViewProps) => {
   const [activeKey, setActiveKey] = useState("");
   const [items, setItems] = useState(initialItems);
   const newTabIndex = useRef(0);
 
-  const onChange = (newActiveKey: string) => {
-    setActiveKey(newActiveKey);
-  };
+  useImperativeHandle(ref, () => ({
+    addTab: (host: Host) => {
+      const newActiveKey = `${host.Name}-${newTabIndex.current++}`;
+      const newPanes = [...items];
+      newPanes.push({ key: newActiveKey, label: host.Name || host.Ip || host.Uid || "", children: <Term /> });
+      setItems(newPanes);
+      setActiveKey(newActiveKey);
+    },
+  }));
 
-  const add = () => {
-    const newActiveKey = `NewTab-${newTabIndex.current++}`;
-    const newPanes = [...items];
-    newPanes.push({ key: newActiveKey, label: newActiveKey, children: <Term /> });
-    setItems(newPanes);
+  const onChange = (newActiveKey: string) => {
     setActiveKey(newActiveKey);
   };
 
@@ -91,16 +104,14 @@ export const TabView = () => {
   };
 
   const onEdit = (targetKey: React.MouseEvent | React.KeyboardEvent | string, action: "add" | "remove") => {
-    if (action === "add") {
-      add();
-    } else {
+    if (action === "remove") {
       remove(targetKey);
     }
   };
 
   return (
     <TabsContainer>
-      <Tabss styles={stylesObject} type="editable-card" onChange={onChange} activeKey={activeKey} onEdit={onEdit} items={items} size="small" />
+      <Tabss styles={stylesObject} type="editable-card" onChange={onChange} activeKey={activeKey} onEdit={onEdit} items={items} size="small" hideAdd />
     </TabsContainer>
   );
 };

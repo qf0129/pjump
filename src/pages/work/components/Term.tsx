@@ -52,5 +52,5 @@ export const Term = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return <div ref={terminalContainerRef} style={{ width: "100%", height: "100%", padding: 8 }} />;
+  return <div ref={terminalContainerRef} style={{ width: "100%", height: "100%", padding: 18 }} />;
 };
