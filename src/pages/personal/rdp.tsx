@@ -71,9 +71,16 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
         // Must not gate on display.getWidth() — it is 0 before the first
         // frame, and Guacamole.Client only sends "sync" in response to one
         // from guacd, creating a deadlock if size isn't sent proactively.
+        //
+        // IMPORTANT: read from containerRef, NOT displayEl. Guacamole Display
+        // overwrites displayEl's inline dimensions to match the remote
+        // desktop resolution, so displayEl.offset* would always return the
+        // current remote size (initially 1024×768) instead of the available
+        // space.
         const sendDisplaySize = () => {
-          const w = displayEl.offsetWidth;
-          const h = displayEl.offsetHeight;
+          if (!containerRef.current) return;
+          const w = containerRef.current.offsetWidth;
+          const h = containerRef.current.offsetHeight;
           if (w > 0 && h > 0) {
             client.sendSize(w, h);
           }
