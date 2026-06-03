@@ -48,7 +48,8 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
 
         // Mouse input — legacy property handlers receive Mouse.State directly,
         // NOT wrapped in a Mouse.Event object (unlike onEach/on callbacks).
-        const mouse = new Guacamole.Mouse(displayEl);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mouse = new Guacamole.Mouse(displayEl) as any;
         mouse.onmousedown = (state: any) => {
           client.sendMouseState(state, true);
         };

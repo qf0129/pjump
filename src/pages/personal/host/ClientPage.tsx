@@ -10,15 +10,14 @@ export default function ClientPage() {
   const [host, setHost] = useState<Host | null>(null);
 
   const changeFavicon = (url: string) => {
-    const link = document.querySelector("link[rel~='icon']") || document.createElement("link");
+    const link: HTMLLinkElement = (document.querySelector("link[rel~='icon']") as HTMLLinkElement) || document.createElement("link");
     link.rel = "icon";
     if (!link.parentElement) document.head.appendChild(link);
     link.href = url;
   };
 
-  const listener = (e): void => {
+  const listener = (e: BeforeUnloadEvent): void => {
     e.preventDefault();
-    e.returnValue = "";
   };
   useEffect(() => {
     PersonalApi.QueryHost({ Uid: uid }).then((data) => {

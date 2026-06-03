@@ -7,6 +7,7 @@ import type { User } from "@/utils/type";
 import useApp from "antd/es/app/useApp";
 import styled from "styled-components";
 import { UserProvider } from "@/contexts/UserContext";
+import { preload, preloads } from "@/routes";
 
 const { Header, Content } = Layout;
 
@@ -117,7 +118,14 @@ export const RootLayout = () => {
           {navItems
             .filter((item) => !item.needAdmin || user?.IsAdmin)
             .map((item) => (
-              <NavBtn key={item.key} className={activeKey === item.key ? "active" : ""} onClick={() => handleNavClick(item.key)}>
+              <NavBtn
+                key={item.key}
+                className={activeKey === item.key ? "active" : ""}
+                onClick={() => handleNavClick(item.key)}
+                onMouseEnter={() => {
+                  if (item.key === "user") preload(preloads.userPage);
+                }}
+              >
                 {item.label}
               </NavBtn>
             ))}
