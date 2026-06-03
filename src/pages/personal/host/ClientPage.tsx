@@ -2,10 +2,10 @@ import PersonalApi from "@/apis/PersonalApi";
 import type { Host } from "@/utils/type";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import SSHTerminal from "./ssh";
-import RDPClient from "./rdp";
+import SSHTerminal from "./SSHTerminal";
+import RDPClient from "./RDPClient";
 
-export default function Client() {
+export default function ClientPage() {
   const { uid } = useParams<{ uid: string }>();
   const [host, setHost] = useState<Host | null>(null);
 

@@ -19,7 +19,7 @@ function osIcon(os: string | undefined) {
   return null;
 }
 
-export default function Home() {
+export default function HostPage() {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [search, setSearch] = useState("");
 
@@ -36,28 +36,19 @@ export default function Home() {
   const filtered = useMemo(() => {
     if (!search.trim()) return hosts;
     const kw = search.toLowerCase();
-    return hosts.filter(
-      (h) =>
-        h.Name?.toLowerCase().includes(kw) ||
-        h.Ip?.toLowerCase().includes(kw) ||
-        h.Protocol?.toLowerCase().includes(kw),
-    );
+    return hosts.filter((h) => h.Name?.toLowerCase().includes(kw) || h.Ip?.toLowerCase().includes(kw) || h.Protocol?.toLowerCase().includes(kw));
   }, [hosts, search]);
 
   return (
     <div style={{ padding: "24px 32px", height: "100%", overflow: "auto" }}>
       <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ marginBottom: 4 }}>服务器列表</Title>
+        <Title level={3} style={{ marginBottom: 4 }}>
+          服务器列表
+        </Title>
         <Text type="secondary">共 {filtered.length} 台资产</Text>
       </div>
 
-      <Input.Search
-        placeholder="搜索名称、IP 或协议…"
-        allowClear
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{ marginBottom: 24, maxWidth: 360 }}
-      />
+      <Input.Search placeholder="搜索名称、IP 或协议…" allowClear value={search} onChange={(e) => setSearch(e.target.value)} style={{ marginBottom: 24, maxWidth: 360 }} />
 
       <Row gutter={[16, 16]}>
         {filtered.map((host) => {
@@ -71,7 +62,9 @@ export default function Home() {
                 title={
                   <Space>
                     {osIcon(host.Os)}
-                    <Text strong style={{ fontSize: 15 }}>{host.Name || "未命名"}</Text>
+                    <Text strong style={{ fontSize: 15 }}>
+                      {host.Name || "未命名"}
+                    </Text>
                     <Tag color={info.color}>{info.label}</Tag>
                   </Space>
                 }
@@ -81,12 +74,7 @@ export default function Home() {
                     {host.Ip}:{host.Port}
                   </Text>
                 </div>
-                <Button
-                  type="primary"
-                  block
-                  icon={info.icon}
-                  onClick={() => window.open("/client/" + host.Uid, "_blank")}
-                >
+                <Button type="primary" block icon={info.icon} onClick={() => window.open("/host/" + host.Uid, "_blank")}>
                   连接
                 </Button>
               </Card>
@@ -95,11 +83,7 @@ export default function Home() {
         })}
       </Row>
 
-      {filtered.length === 0 && (
-        <div style={{ textAlign: "center", padding: "60px 0", color: "#999" }}>
-          {hosts.length === 0 ? "暂无资产" : "未找到匹配的资产"}
-        </div>
-      )}
+      {filtered.length === 0 && <div style={{ textAlign: "center", padding: "60px 0", color: "#999" }}>{hosts.length === 0 ? "暂无资产" : "未找到匹配的资产"}</div>}
     </div>
   );
 }
