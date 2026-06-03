@@ -12,6 +12,7 @@ export type User = BaseModel & {
     Email?: string
     Nickname?: string
     Password?: string
+    IsAdmin?: boolean
 }
 
 export type Group = BaseModel & {
@@ -32,6 +33,9 @@ export type Host = BaseModel & {
     Port: number;
     Protocol: string;
     User: string;
+    Password?: string
+    PrivateKey?: string
+    PrivateKeyPsd?: string
 }
 
 export type OsUser = User & {
