@@ -1,11 +1,4 @@
 :root {
-  /* --main-color: #0050b3; */
-  --main-color: #096dd9;
-  --text-color: #111;
-  --text-color-1: #111;
-  --text-color-3: #333;
-  --text-color-5: #555;
-  --text-color-9: #999;
   --term-header-bg: #333a33;
   --term-body-bg-1: #212121;
   --term-body-bg-2: #2f2a2a;
@@ -15,11 +8,34 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   height: 100vh;
   margin: 0;
-  background-color: #f4f4f4;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f2f5;
 }
+
 #root {
   height: 100%;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

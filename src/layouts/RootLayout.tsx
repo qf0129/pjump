@@ -1,12 +1,32 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
-import { Button, Dropdown, Form, Input, Layout, Modal, Space, type MenuProps } from "antd";
-import { UserOutlined, LogoutOutlined, KeyOutlined } from "@ant-design/icons";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
+import { Button, Dropdown, Form, Input, Layout, Modal, Space, Typography, type MenuProps } from "antd";
+import Icon, { UserOutlined, LogoutOutlined, KeyOutlined, CloudServerOutlined } from "@ant-design/icons";
 import PersonalApi, { type ReqUpdatePassword } from "@/apis/PersonalApi";
 import type { User } from "@/utils/type";
 import useApp from "antd/es/app/useApp";
+import styled from "styled-components";
 
 const { Header, Content } = Layout;
+
+const NavBtn = styled.div`
+  cursor: pointer;
+  padding: 0 16px;
+  height: 100%;
+  color: #373a40;
+  font-size: 16px;
+  transition: color 0.15s ease-out;
+  user-select: none;
+
+  &:hover {
+    color: #222;
+    font-weight: bold;
+  }
+  &.active {
+    color: #222;
+    font-weight: bold;
+  }
+`;
 
 const navItems = [
   { key: "host", label: "服务器" },
@@ -81,16 +101,22 @@ export const RootLayout = () => {
           alignItems: "center",
           justifyContent: "space-between",
           background: "#fff",
-          borderBottom: "1px solid #f0f0f0",
+          boxShadow: "0 1px 4px rgba(0, 0, 0, 0.08)",
           padding: "0 24px",
-          height: 48,
+          height: 56,
+          position: "relative",
+          zIndex: 10,
         }}
       >
-        <Space size={0}>
+        <Space size={8}>
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 2, textDecoration: "none", marginRight: 24 }}>
+            <img src="/icon.svg" width={28} />
+            <span style={{ fontSize: 24, color: "#333", fontWeight: "bold", userSelect: "none" }}>PJUMP</span>
+          </Link>
           {navItems.map((item) => (
-            <Button key={item.key} type={activeKey === item.key ? "primary" : "text"} onClick={() => handleNavClick(item.key)} style={{ borderRadius: 0 }}>
+            <NavBtn key={item.key} className={activeKey === item.key ? "active" : ""} onClick={() => handleNavClick(item.key)}>
               {item.label}
-            </Button>
+            </NavBtn>
           ))}
         </Space>
 
@@ -101,7 +127,7 @@ export const RootLayout = () => {
         </Dropdown>
       </Header>
 
-      <Content style={{ height: "calc(100% - 48px)", overflow: "auto" }}>
+      <Content style={{ height: "calc(100% - 56px)", overflow: "auto" }}>
         <Outlet />
       </Content>
 

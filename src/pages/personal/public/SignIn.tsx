@@ -11,14 +11,15 @@ const SignInRoot = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background: #f0f2f5;
 `;
 
 const SignInCard = styled.div`
-  width: 600px;
-  padding: 30px;
-  padding-top: 60px;
-  border-radius: 2px;
+  width: 400px;
+  padding: 40px 32px 32px;
+  border-radius: 8px;
   background-color: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   text-align: right;
 `;
 

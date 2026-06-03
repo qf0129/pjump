@@ -1,13 +1,11 @@
 import PersonalApi from "@/apis/PersonalApi";
 import type { Host } from "@/utils/type";
-import { Button, Card, Col, Row, Space, Tag, Typography, Input } from "antd";
+import { Button, Card, Col, Pagination, Row, Space, Tag, Typography, Input, Flex } from "antd";
 import { DesktopOutlined, CodeOutlined, WindowsOutlined, AppleOutlined } from "@ant-design/icons";
 import { useEffect, useMemo, useState } from "react";
 
-const { Title, Text } = Typography;
-
 const protocolInfo: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-  ssh: { color: "blue", icon: <CodeOutlined />, label: "SSH" },
+  ssh: { color: "blue", icon: <CodeOutlined color="#222" />, label: "SSH" },
   rdp: { color: "green", icon: <DesktopOutlined />, label: "RDP" },
 };
 
@@ -19,18 +17,27 @@ function osIcon(os: string | undefined) {
   return null;
 }
 
+const PAGE_SIZE = 12;
+
 export default function HostPage() {
   const [hosts, setHosts] = useState<Host[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    PersonalApi.QueryHost({ Page: 1, PageSize: 10 }).then((data) => {
+  const fetchHosts = (p: number, ps: number) => {
+    PersonalApi.QueryHost({ Page: p, PageSize: ps }).then((data) => {
       if (data.Code === 0) {
-        setHosts(data.Data.List);
+        setHosts(data.Data.List ?? []);
+        setTotal(data.Data.Total ?? 0);
       } else {
         console.error(data.Msg);
       }
     });
+  };
+
+  useEffect(() => {
+    fetchHosts(1, PAGE_SIZE);
   }, []);
 
   const filtered = useMemo(() => {
@@ -39,44 +46,39 @@ export default function HostPage() {
     return hosts.filter((h) => h.Name?.toLowerCase().includes(kw) || h.Ip?.toLowerCase().includes(kw) || h.Protocol?.toLowerCase().includes(kw));
   }, [hosts, search]);
 
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handlePageChange = (p: number, ps: number) => {
+    setPage(p);
+    fetchHosts(p, ps);
+  };
+
   return (
-    <div style={{ padding: "24px 32px", height: "100%", overflow: "auto" }}>
-      <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ marginBottom: 4 }}>
-          服务器列表
-        </Title>
-        <Text type="secondary">共 {filtered.length} 台资产</Text>
-      </div>
+    <div style={{ padding: 24, height: "100%", overflow: "auto", display: "flex", flexDirection: "column" }}>
+      <Input.Search placeholder="搜索名称、IP 或协议…" allowClear value={search} onChange={(e) => handleSearch(e.target.value)} style={{ marginBottom: 24, maxWidth: 360 }} />
 
-      <Input.Search placeholder="搜索名称、IP 或协议…" allowClear value={search} onChange={(e) => setSearch(e.target.value)} style={{ marginBottom: 24, maxWidth: 360 }} />
-
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} style={{ flex: 1, alignContent: "flex-start" }}>
         {filtered.map((host) => {
           const info = protocolInfo[host.Protocol] ?? { color: "default", icon: null, label: host.Protocol };
           return (
             <Col key={host.Uid} xs={24} sm={12} lg={8} xl={6}>
-              <Card
-                hoverable
-                size="small"
-                style={{ borderRadius: 12 }}
-                title={
-                  <Space>
-                    {osIcon(host.Os)}
-                    <Text strong style={{ fontSize: 15 }}>
+              <Card size="small">
+                <Flex style={{}} align="center">
+                  <Space vertical style={{ flex: 1, fontSize: 16 }}>
+                    <Typography.Text strong style={{}}>
                       {host.Name || "未命名"}
-                    </Text>
-                    <Tag color={info.color}>{info.label}</Tag>
+                    </Typography.Text>
+                    <Typography.Text type="secondary">
+                      {host.Ip}:{host.Port}
+                    </Typography.Text>
                   </Space>
-                }
-              >
-                <div style={{ marginBottom: 12 }}>
-                  <Text type="secondary" style={{ fontSize: 13 }}>
-                    {host.Ip}:{host.Port}
-                  </Text>
-                </div>
-                <Button type="primary" block icon={info.icon} onClick={() => window.open("/host/" + host.Uid, "_blank")}>
-                  连接
-                </Button>
+                  <Button variant="text" color="primary" icon={info.icon} onClick={() => window.open("/host/" + host.Uid, "_blank")}>
+                    {info.label} 连接
+                  </Button>
+                </Flex>
               </Card>
             </Col>
           );
@@ -84,6 +86,22 @@ export default function HostPage() {
       </Row>
 
       {filtered.length === 0 && <div style={{ textAlign: "center", padding: "60px 0", color: "#999" }}>{hosts.length === 0 ? "暂无资产" : "未找到匹配的资产"}</div>}
+
+      {total > PAGE_SIZE && (
+        <div style={{ marginTop: 24, textAlign: "center" }}>
+          <Pagination
+            current={page}
+            pageSize={PAGE_SIZE}
+            total={total}
+            showSizeChanger
+            showQuickJumper
+            showTotal={(t) => `共 ${t} 台`}
+            pageSizeOptions={["12", "24", "48"]}
+            onChange={handlePageChange}
+            onShowSizeChange={handlePageChange}
+          />
+        </div>
+      )}
     </div>
   );
 }

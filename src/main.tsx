@@ -6,14 +6,34 @@ import { App, ConfigProvider, Empty, type GetProp, type ThemeConfig } from "antd
 
 const customTheme: ThemeConfig = {
   token: {
-    // colorPrimary: '#0050b3',
-    colorPrimary: "#096dd9",
+    colorPrimary: "#0052d9",
     borderRadius: 2,
+    colorBgLayout: "#f0f2f5",
+
+    fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif`,
   },
   components: {
-    Tabs: {
-      cardBg: "rgba(0,0,0,0.06)",
+    // Card: {
+    //   borderRadiusLG: 8,
+    // },
+    Button: {
+      borderRadius: 2,
+      controlHeight: 36,
     },
+    // Table: {
+    //   borderRadiusLG: 8,
+    // },
+    // Modal: {
+    //   borderRadiusLG: 8,
+    // },
+    // Input: {
+    //   borderRadius: 6,
+    //   controlHeight: 36,
+    // },
+    // Select: {
+    //   borderRadius: 6,
+    //   controlHeight: 36,
+    // },
   },
 };
 
