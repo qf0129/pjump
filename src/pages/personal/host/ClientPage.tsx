@@ -9,6 +9,17 @@ export default function ClientPage() {
   const { uid } = useParams<{ uid: string }>();
   const [host, setHost] = useState<Host | null>(null);
 
+  const changeFavicon = (url: string) => {
+    const link = document.querySelector("link[rel~='icon']") || document.createElement("link");
+    link.rel = "icon";
+    if (!link.parentElement) document.head.appendChild(link);
+    link.href = url;
+  };
+
+  const listener = (e): void => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
   useEffect(() => {
     PersonalApi.QueryHost({ Uid: uid }).then((data) => {
       if (data.Code === 0 && data.Data.List.length > 0) {
@@ -20,10 +31,16 @@ export default function ClientPage() {
         } else if (host.Protocol == "ssh") {
           changeFavicon("/ssh.svg");
         }
+        window.addEventListener("beforeunload", listener);
       } else {
         console.error(data);
       }
     });
+
+    return (): void => {
+      setHost(null);
+      window.removeEventListener("beforeunload", listener);
+    };
   }, [uid]);
 
   const clientView = (host: Host) => {
@@ -34,10 +51,3 @@ export default function ClientPage() {
 
   return <div style={{ height: "100%", width: "100%", background: "#000" }}>{host && clientView(host)}</div>;
 }
-
-const changeFavicon = (url: string) => {
-  const link = document.querySelector("link[rel~='icon']") || document.createElement("link");
-  link.rel = "icon";
-  if (!link.parentElement) document.head.appendChild(link);
-  link.href = url;
-};

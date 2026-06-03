@@ -1,4 +1,4 @@
-import { Button, Form, Input } from "antd";
+import { Button, Card, Flex, Form, Input, Space } from "antd";
 import { type FormProps } from "antd/es/form/Form";
 import type { ReqAuth } from "@/apis/api";
 import api from "@/apis/api";
@@ -15,7 +15,7 @@ const SignInRoot = styled.div`
 `;
 
 const SignInCard = styled.div`
-  width: 400px;
+  width: 600px;
   padding: 40px 32px 32px;
   border-radius: 8px;
   background-color: #fff;
@@ -39,7 +39,7 @@ export const SignIn = () => {
 
   return (
     <SignInRoot>
-      <SignInCard>
+      <Card title="PJUMP" style={{ width: 500 }} hoverable>
         <Form onFinish={onFinish} size="large" labelCol={{ span: 4 }}>
           <Form.Item<ReqAuth> label="账号" name="Username" rules={[{ required: true }]}>
             <Input />
@@ -47,13 +47,13 @@ export const SignIn = () => {
           <Form.Item<ReqAuth> label="密码" name="Password" rules={[{ required: true }]}>
             <Input.Password />
           </Form.Item>
-          <Form.Item label={null}>
-            <Button type="primary" htmlType="submit">
+          <Flex justify="right">
+            <Button type="primary" size="large" htmlType="submit">
               SignIn
             </Button>
-          </Form.Item>
+          </Flex>
         </Form>
-      </SignInCard>
+      </Card>
     </SignInRoot>
   );
 };

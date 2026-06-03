@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
-import { Button, Dropdown, Form, Input, Layout, Modal, Space, Typography, type MenuProps } from "antd";
-import Icon, { UserOutlined, LogoutOutlined, KeyOutlined, CloudServerOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Form, Input, Layout, Modal, Space, type MenuProps } from "antd";
+import { UserOutlined, LogoutOutlined, KeyOutlined } from "@ant-design/icons";
 import PersonalApi, { type ReqUpdatePassword } from "@/apis/PersonalApi";
 import type { User } from "@/utils/type";
 import useApp from "antd/es/app/useApp";
 import styled from "styled-components";
+import { UserProvider } from "@/contexts/UserContext";
 
 const { Header, Content } = Layout;
 
@@ -29,8 +30,8 @@ const NavBtn = styled.div`
 `;
 
 const navItems = [
-  { key: "host", label: "服务器" },
-  { key: "user", label: "用户管理" },
+  { key: "host", label: "服务器", needAdmin: false },
+  { key: "user", label: "用户管理", needAdmin: true },
 ];
 
 export const RootLayout = () => {
@@ -113,11 +114,13 @@ export const RootLayout = () => {
             <img src="/icon.svg" width={28} />
             <span style={{ fontSize: 24, color: "#333", fontWeight: "bold", userSelect: "none" }}>PJUMP</span>
           </Link>
-          {navItems.map((item) => (
-            <NavBtn key={item.key} className={activeKey === item.key ? "active" : ""} onClick={() => handleNavClick(item.key)}>
-              {item.label}
-            </NavBtn>
-          ))}
+          {navItems
+            .filter((item) => !item.needAdmin || user?.IsAdmin)
+            .map((item) => (
+              <NavBtn key={item.key} className={activeKey === item.key ? "active" : ""} onClick={() => handleNavClick(item.key)}>
+                {item.label}
+              </NavBtn>
+            ))}
         </Space>
 
         <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
@@ -128,7 +131,9 @@ export const RootLayout = () => {
       </Header>
 
       <Content style={{ height: "calc(100% - 56px)", overflow: "auto" }}>
-        <Outlet />
+        <UserProvider user={user}>
+          <Outlet />
+        </UserProvider>
       </Content>
 
       <Modal

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Button, Card, Form, Input, Modal, Popconfirm, Space, Switch, Table, Typography, type TableColumnsType } from "antd";
+import { Button, Flex, Form, Input, Modal, Popconfirm, Space, Switch, Table, type TableColumnsType } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import PersonalApi, { type ReqQueryUser, type ReqCreateUser, type ReqUpdateUser } from "@/apis/PersonalApi";
 import type { User } from "@/utils/type";
@@ -114,7 +114,7 @@ export default function UserPage() {
       dataIndex: "IsAdmin",
       key: "IsAdmin",
       width: 80,
-      render: (v: boolean) => (v ? "是" : "否"),
+      render: (v: boolean) => (v ? "✔" : ""),
     },
     {
       title: "操作",
@@ -137,29 +137,26 @@ export default function UserPage() {
 
   return (
     <div style={{ padding: 24, height: "100%", overflow: "auto" }}>
-      <Card
-        styles={{ body: { padding: "0 24px 24px" } }}
-        title={
-          <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
-            创建用户
-          </Button>
-        }
-      >
-        <Table
-          rowKey="Uid"
-          columns={columns}
-          dataSource={list}
-          loading={loading}
-          pagination={{
-            current: page,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            showTotal: (t) => `共 ${t} 条`,
-            onChange: handlePageChange,
-          }}
-        />
-      </Card>
+      <Flex align="center" justify="space-between" gap={12} style={{ marginBottom: 24 }}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
+          创建用户
+        </Button>
+      </Flex>
+
+      <Table
+        rowKey="Uid"
+        columns={columns}
+        dataSource={list}
+        loading={loading}
+        pagination={{
+          current: page,
+          pageSize,
+          total,
+          showSizeChanger: true,
+          showTotal: (t) => `共 ${t} 条`,
+          onChange: handlePageChange,
+        }}
+      />
 
       <Modal title={editingUser ? "编辑用户" : "创建用户"} open={modalOpen} onOk={handleModalOk} onCancel={() => setModalOpen(false)} destroyOnClose>
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>

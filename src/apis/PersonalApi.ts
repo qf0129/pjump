@@ -12,6 +12,7 @@ export type ReqSignIn = {
 
 export type ReqQueryHost = {
     Uid?: string
+    Search?: string
     Page?: number
     PageSize?: number
 }
