@@ -60,8 +60,7 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
           client.sendMouseState(state, true);
         };
 
-        // Keyboard input
-        const keyboard = new Guacamole.Keyboard(displayEl);
+        const keyboard = new Guacamole.Keyboard(document);
         keyboard.onkeydown = (keysym: number) => {
           client.sendKeyEvent(1, keysym);
         };
@@ -116,6 +115,8 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
         return () => {
           clearTimeout(sizeTimer);
           resizeObserver.disconnect();
+          keyboard.onkeydown = null;
+          keyboard.onkeyup = null;
           document.head.removeChild(fixStyle);
           displayEl.classList.remove("rdp-canvas-fix");
           client.disconnect();
@@ -141,11 +142,19 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
   return (
     <div style={{ width: "100%", height: "100%", background: "#000", position: "relative" }}>
       {connecting && (
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 1,
-          display: "flex", justifyContent: "center", alignItems: "center",
-          color: "#aaa", fontSize: 16, pointerEvents: "none",
-        }}>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#aaa",
+            fontSize: 16,
+            pointerEvents: "none",
+          }}
+        >
           正在连接...
         </div>
       )}
