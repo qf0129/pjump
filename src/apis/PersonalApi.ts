@@ -1,4 +1,4 @@
-import type { Host, User } from '@/utils/type'
+import type { Host, OsUser, User } from '@/utils/type'
 import request, { type PageObject, type Response } from './request'
 
 // ========== Auth ==========
@@ -20,28 +20,76 @@ export type ReqQueryHost = {
 export type ReqCreateHost = {
     Name: string
     Ip: string
-    Port: number
-    Protocol: string
-    User: string
-    Password?: string
-    PrivateKey?: string
-    PrivateKeyPsd?: string
+    OsType?: string
+    SSHPort?: number
+    RDPPort?: number
+    VNCPort?: number
+    OsUserUids?: string[]
 }
 
 export type ReqUpdateHost = {
     Uid: string
     Name?: string
     Ip?: string
-    Port?: number
-    Protocol?: string
+    OsType?: string
+    SSHPort?: number
+    RDPPort?: number
+    VNCPort?: number
+}
+
+export type ReqDeleteHost = {
+    Uid: string
+    DeleteOsUser?: boolean
+}
+
+// ========== OsUser ==========
+
+export type ReqCreateOsUser = {
+    Name: string
+    User: string
+    Password?: string
+    PrivateKey?: string
+    PrivateKeyPsd?: string
+    HostUid?: string
+}
+
+export type ReqUpdateOsUser = {
+    Uid: string
+    Name?: string
     User?: string
     Password?: string
     PrivateKey?: string
     PrivateKeyPsd?: string
 }
 
-export type ReqDeleteHost = {
+export type ReqQueryOsUser = {
+    Page?: number
+    PageSize?: number
+    Name?: string
+    User?: string
+}
+
+export type ReqDeleteOsUser = {
     Uid: string
+}
+
+// ========== HostOsUser ==========
+
+export type ReqQueryHostOsUser = {
+    HostUid: string
+    Page?: number
+    PageSize?: number
+}
+
+export type ReqCreateHostOsUser = {
+    HostUid: string
+    OsUserUid: string
+}
+
+export type ReqDeleteHostOsUser = {
+    HostUid: string
+    OsUserUid: string
+    DeleteOsUser?: boolean
 }
 
 // ========== User ==========
@@ -83,6 +131,7 @@ export type ReqDeleteUser = {
 export default {
     // Auth
     SignIn: (data: ReqSignIn): Promise<Response<{ Token: string }>> => request.post('/api/SignIn', data),
+    GetHealth: (): Promise<Response<string>> => request.get('/api/health'),
 
     // User
     GetUserInfo: (): Promise<Response<User>> => request.post('/api/GetUserInfo'),
@@ -97,4 +146,25 @@ export default {
     CreateHost: (data: ReqCreateHost): Promise<Response<string>> => request.post('/api/CreateHost', data),
     UpdateHost: (data: ReqUpdateHost): Promise<Response<string>> => request.post('/api/UpdateHost', data),
     DeleteHost: (data: ReqDeleteHost): Promise<Response<string>> => request.post('/api/DeleteHost', data),
+
+    // OsUser
+    QueryOsUser: (data: ReqQueryOsUser): Promise<Response<PageObject<OsUser>>> => request.post('/api/QueryOsUser', data),
+    CreateOsUser: (data: ReqCreateOsUser): Promise<Response<string>> => request.post('/api/CreateOsUser', data),
+    UpdateOsUser: (data: ReqUpdateOsUser): Promise<Response<string>> => request.post('/api/UpdateOsUser', data),
+    DeleteOsUser: (data: ReqDeleteOsUser): Promise<Response<null>> => request.post('/api/DeleteOsUser', data),
+
+    // HostOsUser
+    QueryHostOsUser: (data: ReqQueryHostOsUser): Promise<Response<PageObject<OsUser>>> => request.post('/api/QueryHostOsUser', data),
+    CreateHostOsUser: (data: ReqCreateHostOsUser): Promise<Response<null>> => request.post('/api/CreateHostOsUser', data),
+    DeleteHostOsUser: (data: ReqDeleteHostOsUser): Promise<Response<null>> => request.post('/api/DeleteHostOsUser', data),
+
+    // WebSocket
+    GetSSHWebSocketUrl: (hostUid: string, osUserUid: string): string => {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+        return `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`
+    },
+    GetRDPWebSocketUrl: (hostUid: string, osUserUid: string): string => {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+        return `${protocol}//${window.location.host}/api/ws/rdp/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`
+    },
 }
