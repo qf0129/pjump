@@ -5,6 +5,7 @@ import "@xterm/xterm/css/xterm.css";
 
 interface SSHTerminalProps {
   hostUid: string;
+  osUserUid: string;
 }
 
 interface WSMessage {
@@ -14,7 +15,7 @@ interface WSMessage {
 
 const backgroundColor = "#111";
 
-export default function SSHTerminal({ hostUid }: SSHTerminalProps) {
+export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
   const terminalRef = useRef<HTMLDivElement>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const termRef = useRef<Terminal | null>(null);
@@ -62,7 +63,7 @@ export default function SSHTerminal({ hostUid }: SSHTerminalProps) {
     fitAddonRef.current = fitAddon;
 
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}`;
+    const wsUrl = `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}?u=${encodeURIComponent(osUserUid)}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -116,7 +117,7 @@ export default function SSHTerminal({ hostUid }: SSHTerminalProps) {
       ws.close();
       term.dispose();
     };
-  }, [hostUid, handleResize]);
+  }, [hostUid, osUserUid, handleResize]);
 
   return (
     <div style={{ background: backgroundColor, width: "100%", height: "100%", padding: 8 }}>

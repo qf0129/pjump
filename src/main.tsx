@@ -7,9 +7,10 @@ import { App, ConfigProvider, Empty, type GetProp, type ThemeConfig } from "antd
 const customTheme: ThemeConfig = {
   token: {
     colorPrimary: "#0052d9",
+    colorPrimaryActive: "#0040b0",
+    colorPrimaryHover: "#3c84e2",
     borderRadius: 2,
     colorBgLayout: "#f0f2f5",
-
     fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif`,
   },
   components: {

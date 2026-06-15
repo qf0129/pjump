@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from "react";
 // RDP Tab component using Guacamole
 interface RDPTabProps {
   hostUid: string;
+  osUserUid: string;
 }
 
-export default function RDPClient({ hostUid }: RDPTabProps) {
+export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tunnelRef = useRef<Guacamole.Tunnel>(null);
   const clientRef = useRef<Guacamole.Client>(null);
@@ -102,7 +103,7 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
         const sizeTimer = setTimeout(sendDisplaySize, 1000);
 
         // Connect
-        client.connect();
+        client.connect(`u=${encodeURIComponent(osUserUid)}`);
 
         // Handle subsequent resize
         const resizeObserver = new ResizeObserver(() => {
@@ -137,7 +138,7 @@ export default function RDPClient({ hostUid }: RDPTabProps) {
       if (clientRef.current) clientRef.current.disconnect();
       if (tunnelRef.current) tunnelRef.current.disconnect();
     };
-  }, [hostUid]);
+  }, [hostUid, osUserUid]);
 
   return (
     <div style={{ width: "100%", height: "100%", background: "#000", position: "relative" }}>
