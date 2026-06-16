@@ -35,13 +35,17 @@ const navItems = [
   { key: "user", label: "用户管理", needAdmin: true },
 ];
 
+type UpdatePasswordForm = ReqUpdatePassword & {
+  ConfirmPassword: string;
+};
+
 export const RootLayout = () => {
   const app = useApp();
   const nav = useNavigate();
   const loc = useLocation();
   const [user, setUser] = useState<User | null>(null);
   const [psdOpen, setPsdOpen] = useState(false);
-  const [psdForm] = Form.useForm<ReqUpdatePassword>();
+  const [psdForm] = Form.useForm<UpdatePasswordForm>();
 
   const activeKey = loc.pathname.startsWith("/user") ? "user" : "host";
 
@@ -67,7 +71,8 @@ export const RootLayout = () => {
 
   const handlePsdOk = () => {
     psdForm.validateFields().then((values) => {
-      PersonalApi.UpdatePassword(values).then((res) => {
+      const { ...data } = values;
+      PersonalApi.UpdatePassword(data).then((res) => {
         if (res.Code === 0) {
           app.message.success("密码修改成功");
           setPsdOpen(false);
@@ -152,7 +157,7 @@ export const RootLayout = () => {
           setPsdOpen(false);
           psdForm.resetFields();
         }}
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={psdForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="OldPassword" label="旧密码" rules={[{ required: true, message: "请输入旧密码" }]}>
@@ -165,6 +170,24 @@ export const RootLayout = () => {
               { required: true, message: "请输入新密码" },
               { min: 5, message: "密码长度至少5位" },
               { max: 20, message: "密码长度不超过20位" },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            name="ConfirmPassword"
+            label="确认新密码"
+            dependencies={["NewPassword"]}
+            rules={[
+              { required: true, message: "请再次输入新密码" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("NewPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("两次输入的新密码不一致"));
+                },
+              }),
             ]}
           >
             <Input.Password />
