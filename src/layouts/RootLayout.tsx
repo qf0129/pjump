@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
-import { Button, Dropdown, Form, Input, Layout, Modal, Space, type MenuProps } from "antd";
+import {
+  Button,
+  Dropdown,
+  Form,
+  Input,
+  Layout,
+  Modal,
+  Space,
+  type MenuProps,
+} from "antd";
 import { UserOutlined, LogoutOutlined, KeyOutlined } from "@ant-design/icons";
-import PersonalApi, { type ReqUpdatePassword } from "@/apis/PersonalApi";
+import { Apis, type ReqUpdatePassword } from "@/apis/apis";
 import type { User } from "@/utils/type";
 import useApp from "antd/es/app/useApp";
 import styled from "styled-components";
@@ -50,7 +59,7 @@ export const RootLayout = () => {
   const activeKey = loc.pathname.startsWith("/user") ? "user" : "host";
 
   useEffect(() => {
-    PersonalApi.GetUserInfo().then((res) => {
+    Apis.GetUserInfo().then((res) => {
       if (res.Code === 0) {
         setUser(res.Data);
       }
@@ -72,7 +81,7 @@ export const RootLayout = () => {
   const handlePsdOk = () => {
     psdForm.validateFields().then((values) => {
       const { ...data } = values;
-      PersonalApi.UpdatePassword(data).then((res) => {
+      Apis.UpdatePassword(data).then((res) => {
         if (res.Code === 0) {
           app.message.success("密码修改成功");
           setPsdOpen(false);
@@ -116,9 +125,27 @@ export const RootLayout = () => {
         }}
       >
         <Space size={8}>
-          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 2, textDecoration: "none", marginRight: 24 }}>
+          <Link
+            to="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              textDecoration: "none",
+              marginRight: 24,
+            }}
+          >
             <img src="/icon.svg" width={28} />
-            <span style={{ fontSize: 24, color: "#333", fontWeight: "bold", userSelect: "none" }}>PJUMP</span>
+            <span
+              style={{
+                fontSize: 24,
+                color: "#333",
+                fontWeight: "bold",
+                userSelect: "none",
+              }}
+            >
+              PJUMP
+            </span>
           </Link>
           {navItems
             .filter((item) => !item.needAdmin || user?.IsAdmin)
@@ -160,7 +187,11 @@ export const RootLayout = () => {
         destroyOnHidden
       >
         <Form form={psdForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="OldPassword" label="旧密码" rules={[{ required: true, message: "请输入旧密码" }]}>
+          <Form.Item
+            name="OldPassword"
+            label="旧密码"
+            rules={[{ required: true, message: "请输入旧密码" }]}
+          >
             <Input.Password />
           </Form.Item>
           <Form.Item

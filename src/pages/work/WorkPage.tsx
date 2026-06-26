@@ -3,7 +3,7 @@ import { SiderView } from "./components/SiderView";
 import { TabView, type TabViewRef } from "./components/TabView";
 import { useRef } from "react";
 
-export const Work = () => {
+export default function WorkPage() {
   const tabViewRef = useRef<TabViewRef>(null);
 
   const selectHost = (host: Host) => {
@@ -15,4 +15,4 @@ export const Work = () => {
       <TabView ref={tabViewRef} />
     </div>
   );
-};
+}

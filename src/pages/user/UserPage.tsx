@@ -1,7 +1,23 @@
 import { useEffect, useState, useCallback } from "react";
-import { Button, Flex, Form, Input, Modal, Popconfirm, Space, Switch, Table, type TableColumnsType } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Space,
+  Switch,
+  Table,
+  type TableColumnsType,
+} from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import PersonalApi, { type ReqQueryUser, type ReqCreateUser, type ReqUpdateUser } from "@/apis/PersonalApi";
+import {
+  Apis,
+  type ReqQueryUser,
+  type ReqCreateUser,
+  type ReqUpdateUser,
+} from "@/apis/apis";
 import type { User } from "@/utils/type";
 import useApp from "antd/es/app/useApp";
 
@@ -23,7 +39,7 @@ export default function UserPage() {
         Page: p ?? page,
         PageSize: ps ?? pageSize,
       };
-      PersonalApi.QueryUser(params)
+      Apis.QueryUser(params)
         .then((res) => {
           if (res.Code === 0) {
             setList(res.Data.List ?? []);
@@ -69,7 +85,7 @@ export default function UserPage() {
     form.validateFields().then((values) => {
       if (editingUser) {
         const data: ReqUpdateUser = { Uid: editingUser.Uid!, ...values };
-        PersonalApi.UpdateUser(data).then((res) => {
+        Apis.UpdateUser(data).then((res) => {
           if (res.Code === 0) {
             app.message.success("更新成功");
             setModalOpen(false);
@@ -80,7 +96,7 @@ export default function UserPage() {
         });
       } else {
         const data: ReqCreateUser = values;
-        PersonalApi.CreateUser(data).then((res) => {
+        Apis.CreateUser(data).then((res) => {
           if (res.Code === 0) {
             app.message.success("创建成功");
             setModalOpen(false);
@@ -94,7 +110,7 @@ export default function UserPage() {
   };
 
   const handleDelete = (uid: string) => {
-    PersonalApi.DeleteUser({ Uid: uid }).then((res) => {
+    Apis.DeleteUser({ Uid: uid }).then((res) => {
       if (res.Code === 0) {
         app.message.success("删除成功");
         fetchList();
@@ -122,11 +138,25 @@ export default function UserPage() {
       width: 160,
       render: (_, record) => (
         <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => openEditModal(record)}>
+          <Button
+            type="link"
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => openEditModal(record)}
+          >
             编辑
           </Button>
-          <Popconfirm title="确定删除该用户？" onConfirm={() => handleDelete(record.Uid!)}>
-            <Button type="link" size="small" danger icon={<DeleteOutlined />} disabled={record.Username === "admin"}>
+          <Popconfirm
+            title="确定删除该用户？"
+            onConfirm={() => handleDelete(record.Uid!)}
+          >
+            <Button
+              type="link"
+              size="small"
+              danger
+              icon={<DeleteOutlined />}
+              disabled={record.Username === "admin"}
+            >
               删除
             </Button>
           </Popconfirm>
@@ -137,8 +167,17 @@ export default function UserPage() {
 
   return (
     <div style={{ padding: 24, height: "100%", overflow: "auto" }}>
-      <Flex align="center" justify="space-between" gap={12} style={{ marginBottom: 24 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
+      <Flex
+        align="center"
+        justify="space-between"
+        gap={12}
+        style={{ marginBottom: 24 }}
+      >
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={openCreateModal}
+        >
           创建用户
         </Button>
       </Flex>
@@ -158,9 +197,19 @@ export default function UserPage() {
         }}
       />
 
-      <Modal title={editingUser ? "编辑用户" : "创建用户"} open={modalOpen} onOk={handleModalOk} onCancel={() => setModalOpen(false)} destroyOnClose>
+      <Modal
+        title={editingUser ? "编辑用户" : "创建用户"}
+        open={modalOpen}
+        onOk={handleModalOk}
+        onCancel={() => setModalOpen(false)}
+        destroyOnHidden
+      >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="Username" label="用户名" rules={[{ required: true, message: "请输入用户名" }]}>
+          <Form.Item
+            name="Username"
+            label="用户名"
+            rules={[{ required: true, message: "请输入用户名" }]}
+          >
             <Input disabled={!!editingUser} />
           </Form.Item>
           <Form.Item name="Nickname" label="昵称">
@@ -172,7 +221,15 @@ export default function UserPage() {
           <Form.Item name="Phone" label="手机号">
             <Input />
           </Form.Item>
-          <Form.Item name="Password" label="密码" rules={editingUser ? undefined : [{ required: true, message: "请输入密码" }]}>
+          <Form.Item
+            name="Password"
+            label="密码"
+            rules={
+              editingUser
+                ? undefined
+                : [{ required: true, message: "请输入密码" }]
+            }
+          >
             <Input.Password placeholder={editingUser ? "留空则不修改" : ""} />
           </Form.Item>
           <Form.Item name="IsAdmin" label="管理员" valuePropName="checked">

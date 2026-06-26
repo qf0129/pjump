@@ -1,4 +1,4 @@
-import PersonalApi from "@/apis/PersonalApi";
+import { Apis } from "@/apis/apis";
 import type { Host, OsUser } from "@/utils/type";
 import { Button, Card, Flex, Form, Radio, Typography } from "antd";
 import { useEffect, useMemo, useState } from "react";
@@ -29,7 +29,10 @@ export default function ClientPage() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([PersonalApi.QueryHost({ Uid: uid }), PersonalApi.QueryHostOsUser({ HostUid: uid! })]).then(([hostData, osUserData]) => {
+    Promise.all([
+      Apis.QueryHost({ Uid: uid }),
+      Apis.QueryHostOsUser({ HostUid: uid! }),
+    ]).then(([hostData, osUserData]) => {
       if (hostData.Code === 0 && hostData.Data.List.length > 0) {
         const h = hostData.Data.List[0];
         setHost(h);
@@ -68,7 +71,9 @@ export default function ClientPage() {
   // 连接中：更新 favicon、阻止意外关闭
   useEffect(() => {
     if (!connecting || !connProtocol) return;
-    const link: HTMLLinkElement = (document.querySelector("link[rel~='icon']") as HTMLLinkElement) || document.createElement("link");
+    const link: HTMLLinkElement =
+      (document.querySelector("link[rel~='icon']") as HTMLLinkElement) ||
+      document.createElement("link");
     link.rel = "icon";
     if (!link.parentElement) document.head.appendChild(link);
     link.href = connProtocol === "rdp" ? "/rdp.svg" : "/ssh.svg";
@@ -84,9 +89,15 @@ export default function ClientPage() {
 
   const clientView = () => {
     if (!connProtocol || !host || !connOsUserUid) return null;
-    if (connProtocol === "ssh") return <SSHTerminal hostUid={host.Uid!} osUserUid={connOsUserUid} />;
-    if (connProtocol === "rdp") return <RDPClient hostUid={host.Uid!} osUserUid={connOsUserUid} />;
-    return <div style={{ color: "#aaa", padding: 40, textAlign: "center" }}>VNC 暂不支持</div>;
+    if (connProtocol === "ssh")
+      return <SSHTerminal hostUid={host.Uid!} osUserUid={connOsUserUid} />;
+    if (connProtocol === "rdp")
+      return <RDPClient hostUid={host.Uid!} osUserUid={connOsUserUid} />;
+    return (
+      <div style={{ color: "#aaa", padding: 40, textAlign: "center" }}>
+        VNC 暂不支持
+      </div>
+    );
   };
 
   const availableProtocols = useMemo(() => {
@@ -99,20 +110,46 @@ export default function ClientPage() {
   }, [host]);
 
   if (loading) {
-    return <Flex align="center" justify="center" style={{ height: "100%", background: "#000" }}></Flex>;
+    return (
+      <Flex
+        align="center"
+        justify="center"
+        style={{ height: "100%", background: "#000" }}
+      ></Flex>
+    );
   }
 
   if (connecting) {
-    return <div style={{ height: "100%", width: "100%", background: "#000" }}>{clientView()}</div>;
+    return (
+      <div style={{ height: "100%", width: "100%", background: "#000" }}>
+        {clientView()}
+      </div>
+    );
   }
 
   return (
-    <div style={{ height: "100%", width: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Card title={`连接到 ${host?.Name || host?.Ip || uid}`} style={{ width: 480 }}>
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        background: "#000",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Card
+        title={`连接到 ${host?.Name || host?.Ip || uid}`}
+        style={{ width: 480 }}
+      >
         <Form layout="horizontal" labelCol={{ span: 4 }}>
           <Form.Item label="协议">
             {availableProtocols.length ? (
-              <Radio.Group value={selProtocol} onChange={(e) => setSelProtocol(e.target.value)} buttonStyle="solid">
+              <Radio.Group
+                value={selProtocol}
+                onChange={(e) => setSelProtocol(e.target.value)}
+                buttonStyle="solid"
+              >
                 {availableProtocols.map((p) => (
                   <Radio.Button key={p} value={p}>
                     {PROTO_INFO[p].label}
@@ -125,9 +162,16 @@ export default function ClientPage() {
           </Form.Item>
           <Form.Item label="系统用户">
             {osUsers.length ? (
-              <Radio.Group value={selOsUserUid} onChange={(e) => setSelOsUserUid(e.target.value)} buttonStyle="solid">
+              <Radio.Group
+                value={selOsUserUid}
+                onChange={(e) => setSelOsUserUid(e.target.value)}
+                buttonStyle="solid"
+              >
                 {osUsers.map((u) => (
-                  <Radio.Button key={u.Uid} value={u.Uid}>{`${u.Name || u.User} (${u.User})`}</Radio.Button>
+                  <Radio.Button
+                    key={u.Uid}
+                    value={u.Uid}
+                  >{`${u.Name || u.User} (${u.User})`}</Radio.Button>
                 ))}
               </Radio.Group>
             ) : (
@@ -147,7 +191,11 @@ export default function ClientPage() {
           >
             取消
           </Button>
-          <Button type="primary" onClick={handleConnect} disabled={!selProtocol || !selOsUserUid}>
+          <Button
+            type="primary"
+            onClick={handleConnect}
+            disabled={!selProtocol || !selOsUserUid}
+          >
             连接
           </Button>
         </Flex>

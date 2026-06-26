@@ -1,6 +1,10 @@
-import api from "@/apis/api";
+import api from "@/apis/apis";
 import type { Group, Host } from "@/utils/type";
-import { DownOutlined, LoadingOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  LoadingOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import { Flex } from "antd";
 import { useState } from "react";
 import styled from "styled-components";

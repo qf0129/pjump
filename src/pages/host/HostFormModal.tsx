@@ -1,6 +1,24 @@
-import PersonalApi, { type ReqCreateHost, type ReqUpdateHost, type ReqUpdateOsUser } from "@/apis/PersonalApi";
+import {
+  Apis,
+  type ReqCreateHost,
+  type ReqUpdateHost,
+  type ReqUpdateOsUser,
+} from "@/apis/apis";
 import type { Host, OsUser } from "@/utils/type";
-import { Button, Checkbox, Col, Flex, Form, Input, InputNumber, Modal, Row, Select, Space, Typography } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Typography,
+} from "antd";
 import { useRef, useState } from "react";
 import useApp from "antd/es/app/useApp";
 
@@ -13,7 +31,12 @@ interface Props {
 
 type OsUserEntry = { uid: string; name: string; user: string };
 
-export default function HostFormModal({ open, editingHost, onClose, onSuccess }: Props) {
+export default function HostFormModal({
+  open,
+  editingHost,
+  onClose,
+  onSuccess,
+}: Props) {
   const app = useApp();
   const [form] = Form.useForm();
   const [allOsUsers, setAllOsUsers] = useState<OsUser[]>([]);
@@ -38,7 +61,7 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   } | null>(null);
 
   const refreshAllOsUsers = () => {
-    PersonalApi.QueryOsUser({ Page: 1, PageSize: 999 }).then((data) => {
+    Apis.QueryOsUser({ Page: 1, PageSize: 999 }).then((data) => {
       if (data.Code === 0) setAllOsUsers(data.Data.List ?? []);
     });
   };
@@ -48,7 +71,14 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   const handleOpen = () => {
     if (!editingHost) {
       form.resetFields();
-      form.setFieldsValue({ enableSSH: false, enableRDP: false, enableVNC: false, SSHPort: 0, RDPPort: 0, VNCPort: 0 });
+      form.setFieldsValue({
+        enableSSH: false,
+        enableRDP: false,
+        enableVNC: false,
+        SSHPort: 0,
+        RDPPort: 0,
+        VNCPort: 0,
+      });
       setOsUserEntries([]);
       setSelectKey(0);
       origUidsRef.current = new Set();
@@ -57,7 +87,10 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
     } else {
       setLoading(true);
       setSelectKey(0);
-      Promise.all([PersonalApi.QueryHost({ Uid: editingHost.Uid }), PersonalApi.QueryHostOsUser({ HostUid: editingHost.Uid! })]).then(([hostData, osUserData]) => {
+      Promise.all([
+        Apis.QueryHost({ Uid: editingHost.Uid }),
+        Apis.QueryHostOsUser({ HostUid: editingHost.Uid! }),
+      ]).then(([hostData, osUserData]) => {
         if (hostData.Code === 0 && hostData.Data.List.length > 0) {
           const fresh = hostData.Data.List[0];
           form.setFieldsValue({
@@ -85,7 +118,13 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
         }
         if (osUserData.Code === 0) {
           const users = osUserData.Data.List ?? [];
-          setOsUserEntries(users.map((u) => ({ uid: u.Uid, name: u.Name || u.User, user: u.User })));
+          setOsUserEntries(
+            users.map((u) => ({
+              uid: u.Uid,
+              name: u.Name || u.User,
+              user: u.User,
+            })),
+          );
           origUidsRef.current = new Set(users.map((u) => u.Uid));
         }
         setLoading(false);
@@ -103,7 +142,10 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   const addOsUser = (uid: string) => {
     const src = allOsUsers.find((u) => u.Uid === uid);
     if (!src || osUserEntries.some((e) => e.uid === uid)) return;
-    setOsUserEntries((prev) => [...prev, { uid, name: src.Name || src.User, user: src.User }]);
+    setOsUserEntries((prev) => [
+      ...prev,
+      { uid, name: src.Name || src.User, user: src.User },
+    ]);
     setSelectKey((k) => k + 1);
   };
 
@@ -148,16 +190,26 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
         if (vals.password) data.Password = vals.password;
         if (vals.privateKey) data.PrivateKey = vals.privateKey;
         if (vals.privateKeyPsd) data.PrivateKeyPsd = vals.privateKeyPsd;
-        const res = await PersonalApi.UpdateOsUser(data);
+        const res = await Apis.UpdateOsUser(data);
         if (res.Code === 0) {
-          setOsUserEntries((prev) => prev.map((e) => (e.uid === editingOsUserUid ? { uid: editingOsUserUid, name: vals.name || vals.user, user: vals.user } : e)));
+          setOsUserEntries((prev) =>
+            prev.map((e) =>
+              e.uid === editingOsUserUid
+                ? {
+                    uid: editingOsUserUid,
+                    name: vals.name || vals.user,
+                    user: vals.user,
+                  }
+                : e,
+            ),
+          );
           setOsUserModalOpen(false);
           refreshAllOsUsers();
         } else {
           app.message.warning(res.Msg);
         }
       } else {
-        const res = await PersonalApi.CreateOsUser({
+        const res = await Apis.CreateOsUser({
           Name: vals.name || vals.user,
           User: vals.user,
           Password: vals.password || "",
@@ -165,7 +217,10 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
           PrivateKeyPsd: vals.privateKeyPsd || "",
         });
         if (res.Code === 0) {
-          setOsUserEntries((prev) => [...prev, { uid: res.Data, name: vals.name || vals.user, user: vals.user }]);
+          setOsUserEntries((prev) => [
+            ...prev,
+            { uid: res.Data, name: vals.name || vals.user, user: vals.user },
+          ]);
           setOsUserModalOpen(false);
           setSelectKey((k) => k + 1);
           refreshAllOsUsers();
@@ -190,17 +245,22 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
         const origHost = hostFieldsRef.current;
         const updateData: ReqUpdateHost = { Uid: editingHost.Uid! };
         if (origHost) {
-          if (hostFields.Name !== origHost.Name) updateData.Name = hostFields.Name;
+          if (hostFields.Name !== origHost.Name)
+            updateData.Name = hostFields.Name;
           if (hostFields.Ip !== origHost.Ip) updateData.Ip = hostFields.Ip;
-          if ((hostFields.OsType || "") !== origHost.OsType) updateData.OsType = hostFields.OsType || "";
-          if (hostFields.SSHPort !== origHost.SSHPort) updateData.SSHPort = hostFields.SSHPort;
-          if (hostFields.RDPPort !== origHost.RDPPort) updateData.RDPPort = hostFields.RDPPort;
-          if (hostFields.VNCPort !== origHost.VNCPort) updateData.VNCPort = hostFields.VNCPort;
+          if ((hostFields.OsType || "") !== origHost.OsType)
+            updateData.OsType = hostFields.OsType || "";
+          if (hostFields.SSHPort !== origHost.SSHPort)
+            updateData.SSHPort = hostFields.SSHPort;
+          if (hostFields.RDPPort !== origHost.RDPPort)
+            updateData.RDPPort = hostFields.RDPPort;
+          if (hostFields.VNCPort !== origHost.VNCPort)
+            updateData.VNCPort = hostFields.VNCPort;
         }
 
         const hostChanged = Object.keys(updateData).length > 1;
         if (hostChanged) {
-          const hostRes = await PersonalApi.UpdateHost(updateData);
+          const hostRes = await Apis.UpdateHost(updateData);
           if (hostRes.Code !== 0) {
             app.message.warning(hostRes.Msg);
             return;
@@ -209,10 +269,18 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
 
         const origUids = origUidsRef.current;
         for (const uid of osUserUids) {
-          if (!origUids.has(uid)) await PersonalApi.CreateHostOsUser({ HostUid: editingHost.Uid!, OsUserUid: uid });
+          if (!origUids.has(uid))
+            await Apis.CreateHostOsUser({
+              HostUid: editingHost.Uid!,
+              OsUserUid: uid,
+            });
         }
         for (const uid of origUids) {
-          if (!osUserUids.includes(uid)) await PersonalApi.DeleteHostOsUser({ HostUid: editingHost.Uid!, OsUserUid: uid });
+          if (!osUserUids.includes(uid))
+            await Apis.DeleteHostOsUser({
+              HostUid: editingHost.Uid!,
+              OsUserUid: uid,
+            });
         }
 
         app.message.success("更新成功");
@@ -227,7 +295,7 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
           VNCPort: hostFields.VNCPort || 0,
           OsUserUids: osUserUids.length > 0 ? osUserUids : undefined,
         };
-        PersonalApi.CreateHost(data).then((res) => {
+        Apis.CreateHost(data).then((res) => {
           if (res.Code === 0) {
             app.message.success("创建成功");
             onSuccess();
@@ -255,12 +323,20 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
         // loading={loading}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="Name" label="名称" rules={[{ required: true, message: "请输入服务器名称" }]}>
+          <Form.Item
+            name="Name"
+            label="名称"
+            rules={[{ required: true, message: "请输入服务器名称" }]}
+          >
             <Input placeholder="如：生产服务器" />
           </Form.Item>
           <Row gutter={12}>
             <Col span={12}>
-              <Form.Item name="Ip" label="IP 地址" rules={[{ required: true, message: "请输入 IP 地址" }]}>
+              <Form.Item
+                name="Ip"
+                label="IP 地址"
+                rules={[{ required: true, message: "请输入 IP 地址" }]}
+              >
                 <Input placeholder="如：192.168.1.100" />
               </Form.Item>
             </Col>
@@ -283,22 +359,44 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
             {(["SSH", "RDP", "VNC"] as const).map((proto) => {
               const enableName = `enable${proto}`;
               const portName = `${proto}Port`;
-              const defaultPort = proto === "SSH" ? 22 : proto === "RDP" ? 3389 : 5900;
+              const defaultPort =
+                proto === "SSH" ? 22 : proto === "RDP" ? 3389 : 5900;
               return (
                 <Col span={8} key={proto}>
-                  <Form.Item name={enableName} valuePropName="checked" style={{ marginBottom: 0 }}>
+                  <Form.Item
+                    name={enableName}
+                    valuePropName="checked"
+                    style={{ marginBottom: 0 }}
+                  >
                     <Checkbox
                       onChange={(e) => {
-                        form.setFieldValue(portName, e.target.checked ? defaultPort : 0);
+                        form.setFieldValue(
+                          portName,
+                          e.target.checked ? defaultPort : 0,
+                        );
                       }}
                     >
                       {proto}端口
                     </Checkbox>
                   </Form.Item>
-                  <Form.Item noStyle shouldUpdate={(prev, cur) => prev[enableName] !== cur[enableName]}>
+                  <Form.Item
+                    noStyle
+                    shouldUpdate={(prev, cur) =>
+                      prev[enableName] !== cur[enableName]
+                    }
+                  >
                     {({ getFieldValue }) => (
-                      <Form.Item name={portName} style={{ marginBottom: 0, flex: 1 }}>
-                        <InputNumber min={0} max={65535} disabled={!getFieldValue(enableName)} style={{ width: "100%" }} placeholder={String(defaultPort)} />
+                      <Form.Item
+                        name={portName}
+                        style={{ marginBottom: 0, flex: 1 }}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={65535}
+                          disabled={!getFieldValue(enableName)}
+                          style={{ width: "100%" }}
+                          placeholder={String(defaultPort)}
+                        />
                       </Form.Item>
                     )}
                   </Form.Item>
@@ -311,15 +409,37 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
             系统用户
           </Typography.Text>
           {osUserEntries.map((entry) => (
-            <Flex key={entry.uid} align="center" justify="space-between" style={{ marginBottom: 4, padding: "4px 8px", background: "#fafafa", borderRadius: 4 }}>
+            <Flex
+              key={entry.uid}
+              align="center"
+              justify="space-between"
+              style={{
+                marginBottom: 4,
+                padding: "4px 8px",
+                background: "#fafafa",
+                borderRadius: 4,
+              }}
+            >
               <Typography.Text>
-                {entry.name} <Typography.Text type="secondary">({entry.user})</Typography.Text>
+                {entry.name}{" "}
+                <Typography.Text type="secondary">
+                  ({entry.user})
+                </Typography.Text>
               </Typography.Text>
               <Space>
-                <Button type="link" size="small" onClick={() => openEditOsUserModal(entry.uid)}>
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => openEditOsUserModal(entry.uid)}
+                >
                   编辑
                 </Button>
-                <Button type="link" danger size="small" onClick={() => removeOsUser(entry.uid)}>
+                <Button
+                  type="link"
+                  danger
+                  size="small"
+                  onClick={() => removeOsUser(entry.uid)}
+                >
                   删除
                 </Button>
               </Space>
@@ -327,7 +447,12 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
           ))}
           <Select
             key={selectKey}
-            showSearch={{ filterOption: (input, option) => ((option?.label as string) || "").toLowerCase().includes(input.toLowerCase()) }}
+            showSearch={{
+              filterOption: (input, option) =>
+                ((option?.label as string) || "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase()),
+            }}
             placeholder="选择系统用户"
             style={{ width: "50%", marginTop: 8 }}
             onChange={(val) => {
@@ -338,7 +463,12 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
               addOsUser(val);
             }}
             options={[
-              ...allOsUsers.filter((u) => !osUserEntries.some((e) => e.uid === u.Uid)).map((u) => ({ value: u.Uid, label: `${u.Name || u.User} (${u.User})` })),
+              ...allOsUsers
+                .filter((u) => !osUserEntries.some((e) => e.uid === u.Uid))
+                .map((u) => ({
+                  value: u.Uid,
+                  label: `${u.Name || u.User} (${u.User})`,
+                })),
               { value: "__new__", label: "＋ 新建系统用户" },
             ]}
           />
@@ -357,17 +487,34 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
           <Form.Item name="name" label="名称">
             <Input placeholder="如：root账号" />
           </Form.Item>
-          <Form.Item name="user" label="登录用户" rules={[{ required: true, message: "请输入登录用户名" }]}>
+          <Form.Item
+            name="user"
+            label="登录用户"
+            rules={[{ required: true, message: "请输入登录用户名" }]}
+          >
             <Input placeholder="如：root" />
           </Form.Item>
           <Form.Item name="password" label="密码">
-            <Input.Password placeholder={osUserModalMode === "edit" ? "留空则不修改" : "登录密码"} />
+            <Input.Password
+              placeholder={
+                osUserModalMode === "edit" ? "留空则不修改" : "登录密码"
+              }
+            />
           </Form.Item>
           <Form.Item name="privateKey" label="私钥">
-            <Input.TextArea rows={3} placeholder={osUserModalMode === "edit" ? "留空则不修改" : "SSH 私钥内容"} />
+            <Input.TextArea
+              rows={3}
+              placeholder={
+                osUserModalMode === "edit" ? "留空则不修改" : "SSH 私钥内容"
+              }
+            />
           </Form.Item>
           <Form.Item name="privateKeyPsd" label="私钥密码">
-            <Input.Password placeholder={osUserModalMode === "edit" ? "留空则不修改" : "私钥密码（如有）"} />
+            <Input.Password
+              placeholder={
+                osUserModalMode === "edit" ? "留空则不修改" : "私钥密码（如有）"
+              }
+            />
           </Form.Item>
         </Form>
       </Modal>

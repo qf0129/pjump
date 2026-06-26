@@ -1,4 +1,4 @@
-import api from "@/apis/api";
+import api from "@/apis/apis";
 import type { Group, Host } from "@/utils/type";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
