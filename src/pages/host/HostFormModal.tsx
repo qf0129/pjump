@@ -64,45 +64,47 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
     } else {
       setLoading(true);
       setSelectKey(0);
-      Promise.all([Apis.QueryHost({ Uid: editingHost.Uid }), Apis.QueryHostOsUser({ HostUid: editingHost.Uid! })]).then(([hostData, osUserData]) => {
-        if (hostData.Code === 0 && hostData.Data.List.length > 0) {
-          const fresh = hostData.Data.List[0];
-          form.setFieldsValue({
-            Name: fresh.Name,
-            Ip: fresh.Ip,
-            OsType: fresh.OsType || '',
-            enableSSH: (fresh.SSHPort || 0) > 0,
-            enableRDP: (fresh.RDPPort || 0) > 0,
-            enableVNC: (fresh.VNCPort || 0) > 0,
-            SSHPort: fresh.SSHPort || 0,
-            RDPPort: fresh.RDPPort || 0,
-            VNCPort: fresh.VNCPort || 0,
-          });
-          hostFieldsRef.current = {
-            Name: fresh.Name,
-            Ip: fresh.Ip,
-            OsType: fresh.OsType || '',
-            SSHPort: fresh.SSHPort || 0,
-            RDPPort: fresh.RDPPort || 0,
-            VNCPort: fresh.VNCPort || 0,
-            enableSSH: (fresh.SSHPort || 0) > 0,
-            enableRDP: (fresh.RDPPort || 0) > 0,
-            enableVNC: (fresh.VNCPort || 0) > 0,
-          };
+      Promise.all([Apis.QueryHost({ Uid: editingHost.Uid }), Apis.QueryHostOsUser({ HostUid: editingHost.Uid! })]).then(
+        ([hostData, osUserData]) => {
+          if (hostData.Code === 0 && hostData.Data.List.length > 0) {
+            const fresh = hostData.Data.List[0];
+            form.setFieldsValue({
+              Name: fresh.Name,
+              Ip: fresh.Ip,
+              OsType: fresh.OsType || '',
+              enableSSH: (fresh.SSHPort || 0) > 0,
+              enableRDP: (fresh.RDPPort || 0) > 0,
+              enableVNC: (fresh.VNCPort || 0) > 0,
+              SSHPort: fresh.SSHPort || 0,
+              RDPPort: fresh.RDPPort || 0,
+              VNCPort: fresh.VNCPort || 0,
+            });
+            hostFieldsRef.current = {
+              Name: fresh.Name,
+              Ip: fresh.Ip,
+              OsType: fresh.OsType || '',
+              SSHPort: fresh.SSHPort || 0,
+              RDPPort: fresh.RDPPort || 0,
+              VNCPort: fresh.VNCPort || 0,
+              enableSSH: (fresh.SSHPort || 0) > 0,
+              enableRDP: (fresh.RDPPort || 0) > 0,
+              enableVNC: (fresh.VNCPort || 0) > 0,
+            };
+          }
+          if (osUserData.Code === 0) {
+            const users = osUserData.Data.List ?? [];
+            setOsUserEntries(
+              users.map((u) => ({
+                uid: u.Uid,
+                name: u.Name || u.User,
+                user: u.User,
+              }))
+            );
+            origUidsRef.current = new Set(users.map((u) => u.Uid));
+          }
+          setLoading(false);
         }
-        if (osUserData.Code === 0) {
-          const users = osUserData.Data.List ?? [];
-          setOsUserEntries(
-            users.map((u) => ({
-              uid: u.Uid,
-              name: u.Name || u.User,
-              user: u.User,
-            }))
-          );
-          origUidsRef.current = new Set(users.map((u) => u.Uid));
-        }
-        setLoading(false);
-      });
+      );
       refreshAllOsUsers();
     }
   };
@@ -332,7 +334,13 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
                   <Form.Item noStyle shouldUpdate={(prev, cur) => prev[enableName] !== cur[enableName]}>
                     {({ getFieldValue }) => (
                       <Form.Item name={portName} style={{ marginBottom: 0, flex: 1 }}>
-                        <InputNumber min={0} max={65535} disabled={!getFieldValue(enableName)} style={{ width: '100%' }} placeholder={String(defaultPort)} />
+                        <InputNumber
+                          min={0}
+                          max={65535}
+                          disabled={!getFieldValue(enableName)}
+                          style={{ width: '100%' }}
+                          placeholder={String(defaultPort)}
+                        />
                       </Form.Item>
                     )}
                   </Form.Item>
@@ -372,7 +380,8 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
           <Select
             key={selectKey}
             showSearch={{
-              filterOption: (input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase()),
+              filterOption: (input, option) =>
+                ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase()),
             }}
             placeholder="选择系统用户"
             style={{ width: '50%', marginTop: 8 }}

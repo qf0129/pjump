@@ -163,12 +163,27 @@ export default function AuditPage() {
   ];
 
   const sessionColumns: TableColumnsType<SessionRecord> = [
-    { title: '开始时间', dataIndex: 'StartTime', width: 170, render: formatTime },
+    {
+      title: '开始时间',
+      dataIndex: 'StartTime',
+      width: 170,
+      render: formatTime,
+    },
     { title: '结束时间', dataIndex: 'EndTime', width: 170, render: formatTime },
     { title: '用户 UID', dataIndex: 'UserUid', width: 180, ellipsis: true },
     { title: '主机 UID', dataIndex: 'HostUid', width: 180, ellipsis: true },
-    { title: '系统用户 UID', dataIndex: 'OsUserUid', width: 180, ellipsis: true },
-    { title: '协议', dataIndex: 'Proctol', width: 90, render: (v: string) => <Tag>{v?.toUpperCase()}</Tag> },
+    {
+      title: '系统用户 UID',
+      dataIndex: 'OsUserUid',
+      width: 180,
+      ellipsis: true,
+    },
+    {
+      title: '协议',
+      dataIndex: 'Proctol',
+      width: 90,
+      render: (v: string) => <Tag>{v?.toUpperCase()}</Tag>,
+    },
     {
       title: '状态',
       dataIndex: 'Online',

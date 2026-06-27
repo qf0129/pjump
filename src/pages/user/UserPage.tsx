@@ -158,7 +158,13 @@ export default function UserPage() {
         }}
       />
 
-      <Modal title={editingUser ? '编辑用户' : '创建用户'} open={modalOpen} onOk={handleModalOk} onCancel={() => setModalOpen(false)} destroyOnHidden>
+      <Modal
+        title={editingUser ? '编辑用户' : '创建用户'}
+        open={modalOpen}
+        onOk={handleModalOk}
+        onCancel={() => setModalOpen(false)}
+        destroyOnHidden
+      >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="Username" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
             <Input disabled={!!editingUser} />
@@ -172,7 +178,11 @@ export default function UserPage() {
           <Form.Item name="Phone" label="手机号">
             <Input />
           </Form.Item>
-          <Form.Item name="Password" label="密码" rules={editingUser ? undefined : [{ required: true, message: '请输入密码' }]}>
+          <Form.Item
+            name="Password"
+            label="密码"
+            rules={editingUser ? undefined : [{ required: true, message: '请输入密码' }]}
+          >
             <Input.Password placeholder={editingUser ? '留空则不修改' : ''} />
           </Form.Item>
           <Form.Item name="IsAdmin" label="管理员" valuePropName="checked">

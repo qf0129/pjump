@@ -73,7 +73,11 @@ export const TabView = ({ ref }: TabViewProps) => {
     addTab: (host: Host) => {
       const newActiveKey = `${host.Name}-${newTabIndex.current++}`;
       const newPanes = [...items];
-      newPanes.push({ key: newActiveKey, label: host.Name || host.Ip || host.Uid || '', children: <Term /> });
+      newPanes.push({
+        key: newActiveKey,
+        label: host.Name || host.Ip || host.Uid || '',
+        children: <Term />,
+      });
       setItems(newPanes);
       setActiveKey(newActiveKey);
     },
@@ -111,7 +115,16 @@ export const TabView = ({ ref }: TabViewProps) => {
 
   return (
     <TabsContainer>
-      <Tabss styles={stylesObject} type="editable-card" onChange={onChange} activeKey={activeKey} onEdit={onEdit} items={items} size="small" hideAdd />
+      <Tabss
+        styles={stylesObject}
+        type="editable-card"
+        onChange={onChange}
+        activeKey={activeKey}
+        onEdit={onEdit}
+        items={items}
+        size="small"
+        hideAdd
+      />
     </TabsContainer>
   );
 };

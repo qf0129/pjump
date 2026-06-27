@@ -120,7 +120,14 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
   }, [hostUid, osUserUid, handleResize]);
 
   return (
-    <div style={{ background: backgroundColor, width: '100%', height: '100%', padding: 8 }}>
+    <div
+      style={{
+        background: backgroundColor,
+        width: '100%',
+        height: '100%',
+        padding: 8,
+      }}
+    >
       <div ref={terminalRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );

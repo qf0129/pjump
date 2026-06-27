@@ -138,7 +138,13 @@ export default function HostPage() {
                     {isAdmin && (
                       <>
                         <Button type="text" size="small" icon={<EditOutlined />} onClick={() => openEditModal(host)} />
-                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDeleteClick(host)} />
+                        <Button
+                          type="text"
+                          size="small"
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => handleDeleteClick(host)}
+                        />
                       </>
                     )}
                     {hasSSH && <Tag color="blue">SSH</Tag>}
@@ -151,7 +157,12 @@ export default function HostPage() {
                   <Typography.Text type="secondary" copyable>
                     {host.Ip}
                   </Typography.Text>
-                  <Button color="primary" variant="filled" size="small" onClick={() => window.open('/host/' + host.Uid, '_blank')}>
+                  <Button
+                    color="primary"
+                    variant="filled"
+                    size="small"
+                    onClick={() => window.open('/host/' + host.Uid, '_blank')}
+                  >
                     连接 ➔
                   </Button>
                 </Flex>
@@ -200,7 +211,8 @@ export default function HostPage() {
         okButtonProps={{ danger: true }}
       >
         <Typography.Text>
-          确定要删除服务器 <Typography.Text strong>{deleteTarget?.Name || deleteTarget?.Ip || '未知'}</Typography.Text> 吗？
+          确定要删除服务器 <Typography.Text strong>{deleteTarget?.Name || deleteTarget?.Ip || '未知'}</Typography.Text>{' '}
+          吗？
         </Typography.Text>
         <div style={{ marginTop: 12 }}>
           <Checkbox checked={deleteOsUser} onChange={(e) => setDeleteOsUser(e.target.checked)}>
