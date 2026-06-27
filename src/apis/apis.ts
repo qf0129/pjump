@@ -1,4 +1,12 @@
-import type { Host, OsUser, User } from "@/utils/type";
+import type {
+  Group,
+  Host,
+  LoginRecord,
+  OperationRecord,
+  OsUser,
+  SessionRecord,
+  User,
+} from "@/utils/type";
 import request, { type PageObject, type Response } from "./request";
 
 // ========== Auth ==========
@@ -128,6 +136,41 @@ export type ReqDeleteUser = {
   Uid: string;
 };
 
+// ========== Group ==========
+
+export type ReqQueryGroupHost = {
+  GroupUid: string;
+  Page?: number;
+  PageSize?: number;
+};
+
+// ========== Audit ==========
+
+export type ReqQueryOperationRecord = {
+  Page?: number;
+  PageSize?: number;
+  Username?: string;
+  Action?: string;
+  Resource?: string;
+  TargetUid?: string;
+};
+
+export type ReqQueryLoginRecord = {
+  Page?: number;
+  PageSize?: number;
+  Username?: string;
+  Success?: boolean;
+};
+
+export type ReqQuerySessionRecord = {
+  Page?: number;
+  PageSize?: number;
+  UserUid?: string;
+  HostUid?: string;
+  Protocol?: string;
+  Online?: boolean;
+};
+
 export const Apis = {
   // Auth
   SignIn: (data: ReqSignIn): Promise<Response<{ Token: string }>> =>
@@ -177,6 +220,28 @@ export const Apis = {
   DeleteHostOsUser: (data: ReqDeleteHostOsUser): Promise<Response<null>> =>
     request.post("/api/DeleteHostOsUser", data),
 
+  // Group
+  QueryUserGroup: (data: object): Promise<Response<Group[]>> =>
+    request.post("/api/QueryUserGroup", data),
+  QueryGroupHost: (
+    data: ReqQueryGroupHost,
+  ): Promise<Response<PageObject<Host>>> =>
+    request.post("/api/QueryGroupHost", data),
+
+  // Audit
+  QueryOperationRecord: (
+    data: ReqQueryOperationRecord,
+  ): Promise<Response<PageObject<OperationRecord>>> =>
+    request.post("/api/QueryOperationRecord", data),
+  QueryLoginRecord: (
+    data: ReqQueryLoginRecord,
+  ): Promise<Response<PageObject<LoginRecord>>> =>
+    request.post("/api/QueryLoginRecord", data),
+  QuerySessionRecord: (
+    data: ReqQuerySessionRecord,
+  ): Promise<Response<PageObject<SessionRecord>>> =>
+    request.post("/api/QuerySessionRecord", data),
+
   // WebSocket
   GetSSHWebSocketUrl: (hostUid: string, osUserUid: string): string => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -187,3 +252,5 @@ export const Apis = {
     return `${protocol}//${window.location.host}/api/ws/rdp/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
   },
 };
+
+export default Apis;

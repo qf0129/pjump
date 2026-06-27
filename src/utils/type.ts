@@ -48,3 +48,36 @@ export type HostOsUser = BaseModel & {
     HostUid: string
     OsUserUid: string
 }
+
+export type LoginRecord = BaseModel & {
+    UserUid: string
+    Username: string
+    Ip: string
+    UserAgent: string
+    Success: boolean
+    Message: string
+    LoginTime: string
+}
+
+export type OperationRecord = BaseModel & {
+    UserUid: string
+    Username: string
+    Action: string
+    Resource: string
+    ResourceName: string
+    TargetUid: string
+    Ip: string
+    UserAgent: string
+    Detail: string
+    OperateTime: string
+}
+
+export type SessionRecord = BaseModel & {
+    UserUid: string
+    HostUid: string
+    OsUserUid: string
+    Proctol: string
+    StartTime: string
+    EndTime: string
+    Online: boolean
+}

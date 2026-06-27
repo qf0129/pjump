@@ -8,11 +8,13 @@ const userPageImport = () => import("./pages/user/UserPage");
 const signInImport = () => import("./pages/public/SignIn");
 const clientPageImport = () => import("./pages/host/ClientPage");
 const workPageImport = () => import("./pages/work/WorkPage");
+const auditPageImport = () => import("./pages/audit/AuditPage");
 
 const UserPage = lazy(userPageImport);
 const SignIn = lazy(signInImport);
 const ClientPage = lazy(clientPageImport);
 const WorkPage = lazy(workPageImport);
+const AuditPage = lazy(auditPageImport);
 
 /** 预加载 chunk（hover 时调用，不阻塞当前页面） */
 export function preload(importFn: () => Promise<any>) {
@@ -24,6 +26,7 @@ export const preloads = {
   userPage: userPageImport,
   clientPage: clientPageImport,
   workPage: workPageImport,
+  auditPage: auditPageImport,
   signIn: signInImport,
 };
 
@@ -56,6 +59,14 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <UserPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: "audit",
+        element: (
+          <Lazy>
+            <AuditPage />
           </Lazy>
         ),
       },

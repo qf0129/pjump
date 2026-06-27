@@ -42,6 +42,7 @@ const NavBtn = styled.div`
 const navItems = [
   { key: "host", label: "服务器", needAdmin: false },
   { key: "user", label: "用户管理", needAdmin: true },
+  { key: "audit", label: "审计管理", needAdmin: true },
 ];
 
 type UpdatePasswordForm = ReqUpdatePassword & {
@@ -56,7 +57,11 @@ export const RootLayout = () => {
   const [psdOpen, setPsdOpen] = useState(false);
   const [psdForm] = Form.useForm<UpdatePasswordForm>();
 
-  const activeKey = loc.pathname.startsWith("/user") ? "user" : "host";
+  const activeKey = loc.pathname.startsWith("/user")
+    ? "user"
+    : loc.pathname.startsWith("/audit")
+      ? "audit"
+      : "host";
 
   useEffect(() => {
     Apis.GetUserInfo().then((res) => {
@@ -156,6 +161,7 @@ export const RootLayout = () => {
                 onClick={() => handleNavClick(item.key)}
                 onMouseEnter={() => {
                   if (item.key === "user") preload(preloads.userPage);
+                  if (item.key === "audit") preload(preloads.auditPage);
                 }}
               >
                 {item.label}
