@@ -131,20 +131,14 @@ export default function HostPage() {
           const hasVNC = (host.VNCPort ?? 0) > 0;
           return (
             <Col key={host.Uid} xs={24} sm={12} lg={8} xl={6}>
-              <Card size="small">
+              <Card size="small" styles={{ body: { borderRadius: 10 } }}>
                 <Flex align="center" justify="space-between">
                   <Typography.Text strong>{host.Name || '未命名'}</Typography.Text>
                   <Space size={0}>
                     {isAdmin && (
                       <>
                         <Button type="text" size="small" icon={<EditOutlined />} onClick={() => openEditModal(host)} />
-                        <Button
-                          type="text"
-                          size="small"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => handleDeleteClick(host)}
-                        />
+                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDeleteClick(host)} />
                       </>
                     )}
                     {hasSSH && <Tag color="blue">SSH</Tag>}
@@ -157,12 +151,7 @@ export default function HostPage() {
                   <Typography.Text type="secondary" copyable>
                     {host.Ip}
                   </Typography.Text>
-                  <Button
-                    color="primary"
-                    variant="filled"
-                    size="small"
-                    onClick={() => window.open('/host/' + host.Uid, '_blank')}
-                  >
+                  <Button color="primary" variant="filled" size="small" onClick={() => window.open('/host/' + host.Uid, '_blank')}>
                     连接 ➔
                   </Button>
                 </Flex>
@@ -211,8 +200,7 @@ export default function HostPage() {
         okButtonProps={{ danger: true }}
       >
         <Typography.Text>
-          确定要删除服务器 <Typography.Text strong>{deleteTarget?.Name || deleteTarget?.Ip || '未知'}</Typography.Text>{' '}
-          吗？
+          确定要删除服务器 <Typography.Text strong>{deleteTarget?.Name || deleteTarget?.Ip || '未知'}</Typography.Text> 吗？
         </Typography.Text>
         <div style={{ marginTop: 12 }}>
           <Checkbox checked={deleteOsUser} onChange={(e) => setDeleteOsUser(e.target.checked)}>

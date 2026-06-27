@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
 // RDP Tab component using Guacamole
-interface RDPTabProps {
+interface GuacdClientProps {
   hostUid: string;
   osUserUid: string;
-  protocol?: 'rdp' | 'vnc';
+  protocol: 'rdp' | 'vnc';
 }
 
-export default function RDPClient({ hostUid, osUserUid, protocol: remoteProtocol = 'rdp' }: RDPTabProps) {
+export default function GuacdClient({ hostUid, osUserUid, protocol }: GuacdClientProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tunnelRef = useRef<Guacamole.Tunnel>(null);
   const clientRef = useRef<Guacamole.Client>(null);
@@ -21,8 +21,8 @@ export default function RDPClient({ hostUid, osUserUid, protocol: remoteProtocol
       try {
         const Guacamole = (await import('guacamole-common-js')).default;
 
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/api/ws/${remoteProtocol}/${hostUid}`;
+        const connProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${connProtocol}//${window.location.host}/api/ws/${protocol}/${hostUid}`;
 
         const tunnel = new Guacamole.WebSocketTunnel(wsUrl);
         tunnelRef.current = tunnel;
@@ -75,12 +75,12 @@ export default function RDPClient({ hostUid, osUserUid, protocol: remoteProtocol
         client.onerror = (err: any) => {
           console.error('Guacamole client error:', err);
           setConnecting(false);
-          setErrorText(formatGuacamoleError(err, remoteProtocol));
+          setErrorText(formatGuacamoleError(err, protocol));
         };
         tunnel.onerror = (err: any) => {
           console.error('Guacamole tunnel error:', err);
           setConnecting(false);
-          setErrorText(formatGuacamoleError(err, remoteProtocol));
+          setErrorText(formatGuacamoleError(err, protocol));
         };
 
         // Send display size to guacd once the container has real dimensions.
@@ -144,7 +144,7 @@ export default function RDPClient({ hostUid, osUserUid, protocol: remoteProtocol
       if (clientRef.current) clientRef.current.disconnect();
       if (tunnelRef.current) tunnelRef.current.disconnect();
     };
-  }, [hostUid, osUserUid, remoteProtocol]);
+  }, [hostUid, osUserUid, protocol]);
 
   return (
     <div

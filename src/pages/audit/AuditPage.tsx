@@ -30,7 +30,7 @@ function actionTag(action: string) {
 
 export default function AuditPage() {
   const app = useApp();
-  const [activeKey, setActiveKey] = useState<TabKey>('operation');
+  const [activeKey, setActiveKey] = useState<TabKey>('session');
   const [operationForm] = Form.useForm();
   const [loginForm] = Form.useForm();
   const [sessionForm] = Form.useForm();
@@ -288,6 +288,7 @@ export default function AuditPage() {
           options={[
             { value: 'ssh', label: 'SSH' },
             { value: 'rdp', label: 'RDP' },
+            { value: 'vnc', label: 'VNC' },
           ]}
         />
       </Form.Item>
