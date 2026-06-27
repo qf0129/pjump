@@ -1,14 +1,14 @@
-import { lazy, Suspense } from "react";
-import { Navigate, type RouteObject } from "react-router";
-import { Spin } from "antd";
-import { RootLayout } from "./layouts/RootLayout";
-import HostPage from "./pages/host/HostPage";
+import { lazy, Suspense } from 'react';
+import { Navigate, type RouteObject } from 'react-router';
+import { Spin } from 'antd';
+import { RootLayout } from './layouts/RootLayout';
+import HostPage from './pages/host/HostPage';
 
-const userPageImport = () => import("./pages/user/UserPage");
-const signInImport = () => import("./pages/public/SignIn");
-const clientPageImport = () => import("./pages/host/ClientPage");
-const workPageImport = () => import("./pages/work/WorkPage");
-const auditPageImport = () => import("./pages/audit/AuditPage");
+const userPageImport = () => import('./pages/user/UserPage');
+const signInImport = () => import('./pages/public/SignIn');
+const clientPageImport = () => import('./pages/host/ClientPage');
+const workPageImport = () => import('./pages/work/WorkPage');
+const auditPageImport = () => import('./pages/audit/AuditPage');
 
 const UserPage = lazy(userPageImport);
 const SignIn = lazy(signInImport);
@@ -33,10 +33,10 @@ export const preloads = {
 const fallback = (
   <div
     style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100%",
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
       minHeight: 200,
     }}
   >
@@ -44,18 +44,16 @@ const fallback = (
   </div>
 );
 
-const Lazy = ({ children }: { children: React.ReactNode }) => (
-  <Suspense fallback={fallback}>{children}</Suspense>
-);
+const Lazy = ({ children }: { children: React.ReactNode }) => <Suspense fallback={fallback}>{children}</Suspense>;
 
 export const routes: RouteObject[] = [
   { index: true, element: <Navigate to="/host" replace /> },
   {
     element: <RootLayout />,
     children: [
-      { path: "host", element: <HostPage /> },
+      { path: 'host', element: <HostPage /> },
       {
-        path: "user",
+        path: 'user',
         element: (
           <Lazy>
             <UserPage />
@@ -63,7 +61,7 @@ export const routes: RouteObject[] = [
         ),
       },
       {
-        path: "audit",
+        path: 'audit',
         element: (
           <Lazy>
             <AuditPage />
@@ -73,7 +71,7 @@ export const routes: RouteObject[] = [
     ],
   },
   {
-    path: "host/:uid",
+    path: 'host/:uid',
     element: (
       <Lazy>
         <ClientPage />
@@ -81,7 +79,7 @@ export const routes: RouteObject[] = [
     ),
   },
   {
-    path: "/signin",
+    path: '/signin',
     element: (
       <Lazy>
         <SignIn />
@@ -89,7 +87,7 @@ export const routes: RouteObject[] = [
     ),
   },
   {
-    path: "/work",
+    path: '/work',
     element: (
       <Lazy>
         <WorkPage />

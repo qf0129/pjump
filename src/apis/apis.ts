@@ -1,13 +1,5 @@
-import type {
-  Group,
-  Host,
-  LoginRecord,
-  OperationRecord,
-  OsUser,
-  SessionRecord,
-  User,
-} from "@/utils/type";
-import request, { type PageObject, type Response } from "./request";
+import type { Group, Host, LoginRecord, OperationRecord, OsUser, SessionRecord, User } from '@/utils/type';
+import request, { type PageObject, type Response } from './request';
 
 // ========== Auth ==========
 
@@ -175,86 +167,54 @@ export type ReqQuerySessionRecord = {
 
 export const Apis = {
   // Auth
-  SignIn: (data: ReqSignIn): Promise<Response<{ Token: string }>> =>
-    request.post("/api/SignIn", data),
-  GetHealth: (): Promise<Response<string>> => request.get("/api/health"),
+  SignIn: (data: ReqSignIn): Promise<Response<{ Token: string }>> => request.post('/api/SignIn', data),
+  GetHealth: (): Promise<Response<string>> => request.get('/api/health'),
 
   // User
-  GetUserInfo: (): Promise<Response<User>> => request.post("/api/GetUserInfo"),
-  UpdatePassword: (data: ReqUpdatePassword): Promise<Response<string>> =>
-    request.post("/api/UpdatePassword", data),
-  QueryUser: (data: ReqQueryUser): Promise<Response<PageObject<User>>> =>
-    request.post("/api/QueryUser", data),
-  CreateUser: (data: ReqCreateUser): Promise<Response<string>> =>
-    request.post("/api/CreateUser", data),
-  UpdateUser: (data: ReqUpdateUser): Promise<Response<string>> =>
-    request.post("/api/UpdateUser", data),
-  DeleteUser: (data: ReqDeleteUser): Promise<Response<string>> =>
-    request.post("/api/DeleteUser", data),
+  GetUserInfo: (): Promise<Response<User>> => request.post('/api/GetUserInfo'),
+  UpdatePassword: (data: ReqUpdatePassword): Promise<Response<string>> => request.post('/api/UpdatePassword', data),
+  QueryUser: (data: ReqQueryUser): Promise<Response<PageObject<User>>> => request.post('/api/QueryUser', data),
+  CreateUser: (data: ReqCreateUser): Promise<Response<string>> => request.post('/api/CreateUser', data),
+  UpdateUser: (data: ReqUpdateUser): Promise<Response<string>> => request.post('/api/UpdateUser', data),
+  DeleteUser: (data: ReqDeleteUser): Promise<Response<string>> => request.post('/api/DeleteUser', data),
 
   // Host
-  QueryHost: (data: ReqQueryHost): Promise<Response<PageObject<Host>>> =>
-    request.post("/api/QueryHost", data),
-  CreateHost: (data: ReqCreateHost): Promise<Response<string>> =>
-    request.post("/api/CreateHost", data),
-  UpdateHost: (data: ReqUpdateHost): Promise<Response<string>> =>
-    request.post("/api/UpdateHost", data),
-  DeleteHost: (data: ReqDeleteHost): Promise<Response<string>> =>
-    request.post("/api/DeleteHost", data),
+  QueryHost: (data: ReqQueryHost): Promise<Response<PageObject<Host>>> => request.post('/api/QueryHost', data),
+  CreateHost: (data: ReqCreateHost): Promise<Response<string>> => request.post('/api/CreateHost', data),
+  UpdateHost: (data: ReqUpdateHost): Promise<Response<string>> => request.post('/api/UpdateHost', data),
+  DeleteHost: (data: ReqDeleteHost): Promise<Response<string>> => request.post('/api/DeleteHost', data),
 
   // OsUser
-  QueryOsUser: (data: ReqQueryOsUser): Promise<Response<PageObject<OsUser>>> =>
-    request.post("/api/QueryOsUser", data),
-  CreateOsUser: (data: ReqCreateOsUser): Promise<Response<string>> =>
-    request.post("/api/CreateOsUser", data),
-  UpdateOsUser: (data: ReqUpdateOsUser): Promise<Response<string>> =>
-    request.post("/api/UpdateOsUser", data),
-  DeleteOsUser: (data: ReqDeleteOsUser): Promise<Response<null>> =>
-    request.post("/api/DeleteOsUser", data),
+  QueryOsUser: (data: ReqQueryOsUser): Promise<Response<PageObject<OsUser>>> => request.post('/api/QueryOsUser', data),
+  CreateOsUser: (data: ReqCreateOsUser): Promise<Response<string>> => request.post('/api/CreateOsUser', data),
+  UpdateOsUser: (data: ReqUpdateOsUser): Promise<Response<string>> => request.post('/api/UpdateOsUser', data),
+  DeleteOsUser: (data: ReqDeleteOsUser): Promise<Response<null>> => request.post('/api/DeleteOsUser', data),
 
   // HostOsUser
-  QueryHostOsUser: (
-    data: ReqQueryHostOsUser,
-  ): Promise<Response<PageObject<OsUser>>> =>
-    request.post("/api/QueryHostOsUser", data),
-  CreateHostOsUser: (data: ReqCreateHostOsUser): Promise<Response<null>> =>
-    request.post("/api/CreateHostOsUser", data),
-  DeleteHostOsUser: (data: ReqDeleteHostOsUser): Promise<Response<null>> =>
-    request.post("/api/DeleteHostOsUser", data),
+  QueryHostOsUser: (data: ReqQueryHostOsUser): Promise<Response<PageObject<OsUser>>> => request.post('/api/QueryHostOsUser', data),
+  CreateHostOsUser: (data: ReqCreateHostOsUser): Promise<Response<null>> => request.post('/api/CreateHostOsUser', data),
+  DeleteHostOsUser: (data: ReqDeleteHostOsUser): Promise<Response<null>> => request.post('/api/DeleteHostOsUser', data),
 
   // Group
-  QueryUserGroup: (data: object): Promise<Response<Group[]>> =>
-    request.post("/api/QueryUserGroup", data),
-  QueryGroupHost: (
-    data: ReqQueryGroupHost,
-  ): Promise<Response<PageObject<Host>>> =>
-    request.post("/api/QueryGroupHost", data),
+  QueryUserGroup: (data: object): Promise<Response<Group[]>> => request.post('/api/QueryUserGroup', data),
+  QueryGroupHost: (data: ReqQueryGroupHost): Promise<Response<PageObject<Host>>> => request.post('/api/QueryGroupHost', data),
 
   // Audit
-  QueryOperationRecord: (
-    data: ReqQueryOperationRecord,
-  ): Promise<Response<PageObject<OperationRecord>>> =>
-    request.post("/api/QueryOperationRecord", data),
-  QueryLoginRecord: (
-    data: ReqQueryLoginRecord,
-  ): Promise<Response<PageObject<LoginRecord>>> =>
-    request.post("/api/QueryLoginRecord", data),
-  QuerySessionRecord: (
-    data: ReqQuerySessionRecord,
-  ): Promise<Response<PageObject<SessionRecord>>> =>
-    request.post("/api/QuerySessionRecord", data),
+  QueryOperationRecord: (data: ReqQueryOperationRecord): Promise<Response<PageObject<OperationRecord>>> => request.post('/api/QueryOperationRecord', data),
+  QueryLoginRecord: (data: ReqQueryLoginRecord): Promise<Response<PageObject<LoginRecord>>> => request.post('/api/QueryLoginRecord', data),
+  QuerySessionRecord: (data: ReqQuerySessionRecord): Promise<Response<PageObject<SessionRecord>>> => request.post('/api/QuerySessionRecord', data),
 
   // WebSocket
   GetSSHWebSocketUrl: (hostUid: string, osUserUid: string): string => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     return `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
   },
   GetRDPWebSocketUrl: (hostUid: string, osUserUid: string): string => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     return `${protocol}//${window.location.host}/api/ws/rdp/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
   },
   GetVNCWebSocketUrl: (hostUid: string, osUserUid: string): string => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     return `${protocol}//${window.location.host}/api/ws/vnc/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
   },
 };

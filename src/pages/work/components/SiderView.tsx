@@ -1,8 +1,8 @@
-import api from "@/apis/apis";
-import type { Group, Host } from "@/utils/type";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
-import { HostGroup } from "./HostGroup";
+import api from '@/apis/apis';
+import type { Group, Host } from '@/utils/type';
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { HostGroup } from './HostGroup';
 
 const SiderContainer = styled.div`
   width: 240px;

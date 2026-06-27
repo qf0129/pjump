@@ -1,7 +1,7 @@
-import { useRef, useEffect } from "react";
-import { Terminal } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
-import "@xterm/xterm/css/xterm.css";
+import { useRef, useEffect } from 'react';
+import { Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
+import '@xterm/xterm/css/xterm.css';
 
 export const Term = () => {
   const terminalRef = useRef<Terminal>(null);
@@ -15,8 +15,8 @@ export const Term = () => {
       fontFamily: 'monaco, Consolas, "Lucida Console", monospace',
       rightClickSelectsWord: true,
       theme: {
-        background: "#212121",
-        foreground: "#d4d4d4",
+        background: '#212121',
+        foreground: '#d4d4d4',
       },
     });
 
@@ -31,8 +31,8 @@ export const Term = () => {
       // 调整终端大小以适应容器
       fitAddon.fit();
       // 向终端写入消息
-      terminal.write("Welcome to terminal!\r\n");
-      terminal.write("$ ");
+      terminal.write('Welcome to terminal!\r\n');
+      terminal.write('$ ');
     }
 
     return () => {
@@ -48,9 +48,9 @@ export const Term = () => {
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  return <div ref={terminalContainerRef} style={{ width: "100%", height: "100%", padding: 18 }} />;
+  return <div ref={terminalContainerRef} style={{ width: '100%', height: '100%', padding: 18 }} />;
 };

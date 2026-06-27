@@ -1,5 +1,5 @@
-import { createContext, useContext } from "react";
-import type { User } from "@/utils/type";
+import { createContext, useContext } from 'react';
+import type { User } from '@/utils/type';
 
 interface UserContextValue {
   user: User | null;
@@ -11,19 +11,9 @@ const UserContext = createContext<UserContextValue>({
   isAdmin: false,
 });
 
-export function UserProvider({
-  user,
-  children,
-}: {
-  user: User | null;
-  children: React.ReactNode;
-}) {
+export function UserProvider({ user, children }: { user: User | null; children: React.ReactNode }) {
   const isAdmin = user?.IsAdmin === true;
-  return (
-    <UserContext.Provider value={{ user, isAdmin }}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, isAdmin }}>{children}</UserContext.Provider>;
 }
 
 export function useUser() {

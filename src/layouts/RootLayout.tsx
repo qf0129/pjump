@@ -1,22 +1,13 @@
-import { useEffect, useState } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router";
-import {
-  Button,
-  Dropdown,
-  Form,
-  Input,
-  Layout,
-  Modal,
-  Space,
-  type MenuProps,
-} from "antd";
-import { UserOutlined, LogoutOutlined, KeyOutlined } from "@ant-design/icons";
-import { Apis, type ReqUpdatePassword } from "@/apis/apis";
-import type { User } from "@/utils/type";
-import useApp from "antd/es/app/useApp";
-import styled from "styled-components";
-import { UserProvider } from "@/contexts/UserContext";
-import { preload, preloads } from "@/routes";
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router';
+import { Button, Dropdown, Form, Input, Layout, Modal, Space, type MenuProps } from 'antd';
+import { UserOutlined, LogoutOutlined, KeyOutlined } from '@ant-design/icons';
+import { Apis, type ReqUpdatePassword } from '@/apis/apis';
+import type { User } from '@/utils/type';
+import useApp from 'antd/es/app/useApp';
+import styled from 'styled-components';
+import { UserProvider } from '@/contexts/UserContext';
+import { preload, preloads } from '@/routes';
 
 const { Header, Content } = Layout;
 
@@ -40,9 +31,9 @@ const NavBtn = styled.div`
 `;
 
 const navItems = [
-  { key: "host", label: "服务器", needAdmin: false },
-  { key: "user", label: "用户管理", needAdmin: true },
-  { key: "audit", label: "审计管理", needAdmin: true },
+  { key: 'host', label: '服务器', needAdmin: false },
+  { key: 'user', label: '用户管理', needAdmin: true },
+  { key: 'audit', label: '审计管理', needAdmin: true },
 ];
 
 type UpdatePasswordForm = ReqUpdatePassword & {
@@ -57,11 +48,7 @@ export const RootLayout = () => {
   const [psdOpen, setPsdOpen] = useState(false);
   const [psdForm] = Form.useForm<UpdatePasswordForm>();
 
-  const activeKey = loc.pathname.startsWith("/user")
-    ? "user"
-    : loc.pathname.startsWith("/audit")
-      ? "audit"
-      : "host";
+  const activeKey = loc.pathname.startsWith('/user') ? 'user' : loc.pathname.startsWith('/audit') ? 'audit' : 'host';
 
   useEffect(() => {
     Apis.GetUserInfo().then((res) => {
@@ -76,7 +63,7 @@ export const RootLayout = () => {
   };
 
   const handleLogout = () => {
-    nav("/signin");
+    nav('/signin');
   };
 
   const handleUpdatePassword = () => {
@@ -88,7 +75,7 @@ export const RootLayout = () => {
       const { ...data } = values;
       Apis.UpdatePassword(data).then((res) => {
         if (res.Code === 0) {
-          app.message.success("密码修改成功");
+          app.message.success('密码修改成功');
           setPsdOpen(false);
           psdForm.resetFields();
         } else {
@@ -98,34 +85,34 @@ export const RootLayout = () => {
     });
   };
 
-  const dropdownItems: MenuProps["items"] = [
+  const dropdownItems: MenuProps['items'] = [
     {
-      key: "password",
+      key: 'password',
       icon: <KeyOutlined />,
-      label: "修改密码",
+      label: '修改密码',
       onClick: handleUpdatePassword,
     },
-    { type: "divider" },
+    { type: 'divider' },
     {
-      key: "logout",
+      key: 'logout',
       icon: <LogoutOutlined />,
-      label: "退出登录",
+      label: '退出登录',
       onClick: handleLogout,
     },
   ];
 
   return (
-    <Layout style={{ height: "100%" }}>
+    <Layout style={{ height: '100%' }}>
       <Header
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: "#fff",
-          boxShadow: "0 1px 4px rgba(0, 0, 0, 0.08)",
-          padding: "0 24px",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: '#fff',
+          boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)',
+          padding: '0 24px',
           height: 56,
-          position: "relative",
+          position: 'relative',
           zIndex: 10,
         }}
       >
@@ -133,10 +120,10 @@ export const RootLayout = () => {
           <Link
             to="/"
             style={{
-              display: "flex",
-              alignItems: "center",
+              display: 'flex',
+              alignItems: 'center',
               gap: 2,
-              textDecoration: "none",
+              textDecoration: 'none',
               marginRight: 24,
             }}
           >
@@ -144,9 +131,9 @@ export const RootLayout = () => {
             <span
               style={{
                 fontSize: 24,
-                color: "#333",
-                fontWeight: "bold",
-                userSelect: "none",
+                color: '#333',
+                fontWeight: 'bold',
+                userSelect: 'none',
               }}
             >
               PJUMP
@@ -157,11 +144,11 @@ export const RootLayout = () => {
             .map((item) => (
               <NavBtn
                 key={item.key}
-                className={activeKey === item.key ? "active" : ""}
+                className={activeKey === item.key ? 'active' : ''}
                 onClick={() => handleNavClick(item.key)}
                 onMouseEnter={() => {
-                  if (item.key === "user") preload(preloads.userPage);
-                  if (item.key === "audit") preload(preloads.auditPage);
+                  if (item.key === 'user') preload(preloads.userPage);
+                  if (item.key === 'audit') preload(preloads.auditPage);
                 }}
               >
                 {item.label}
@@ -171,12 +158,12 @@ export const RootLayout = () => {
 
         <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
           <Button type="text" icon={<UserOutlined />}>
-            {user?.Nickname || user?.Username || "用户"}
+            {user?.Nickname || user?.Username || '用户'}
           </Button>
         </Dropdown>
       </Header>
 
-      <Content style={{ height: "calc(100% - 56px)", overflow: "auto" }}>
+      <Content style={{ height: 'calc(100% - 56px)', overflow: 'auto' }}>
         <UserProvider user={user}>
           <Outlet />
         </UserProvider>
@@ -193,20 +180,16 @@ export const RootLayout = () => {
         destroyOnHidden
       >
         <Form form={psdForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item
-            name="OldPassword"
-            label="旧密码"
-            rules={[{ required: true, message: "请输入旧密码" }]}
-          >
+          <Form.Item name="OldPassword" label="旧密码" rules={[{ required: true, message: '请输入旧密码' }]}>
             <Input.Password />
           </Form.Item>
           <Form.Item
             name="NewPassword"
             label="新密码"
             rules={[
-              { required: true, message: "请输入新密码" },
-              { min: 5, message: "密码长度至少5位" },
-              { max: 20, message: "密码长度不超过20位" },
+              { required: true, message: '请输入新密码' },
+              { min: 5, message: '密码长度至少5位' },
+              { max: 20, message: '密码长度不超过20位' },
             ]}
           >
             <Input.Password />
@@ -214,15 +197,15 @@ export const RootLayout = () => {
           <Form.Item
             name="ConfirmPassword"
             label="确认新密码"
-            dependencies={["NewPassword"]}
+            dependencies={['NewPassword']}
             rules={[
-              { required: true, message: "请再次输入新密码" },
+              { required: true, message: '请再次输入新密码' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("NewPassword") === value) {
+                  if (!value || getFieldValue('NewPassword') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error("两次输入的新密码不一致"));
+                  return Promise.reject(new Error('两次输入的新密码不一致'));
                 },
               }),
             ]}

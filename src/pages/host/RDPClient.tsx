@@ -1,31 +1,27 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 // RDP Tab component using Guacamole
 interface RDPTabProps {
   hostUid: string;
   osUserUid: string;
-  protocol?: "rdp" | "vnc";
+  protocol?: 'rdp' | 'vnc';
 }
 
-export default function RDPClient({
-  hostUid,
-  osUserUid,
-  protocol: remoteProtocol = "rdp",
-}: RDPTabProps) {
+export default function RDPClient({ hostUid, osUserUid, protocol: remoteProtocol = 'rdp' }: RDPTabProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tunnelRef = useRef<Guacamole.Tunnel>(null);
   const clientRef = useRef<Guacamole.Client>(null);
   const [connecting, setConnecting] = useState(true);
-  const [errorText, setErrorText] = useState("");
+  const [errorText, setErrorText] = useState('');
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const initGuacamole = async () => {
       try {
-        const Guacamole = (await import("guacamole-common-js")).default;
+        const Guacamole = (await import('guacamole-common-js')).default;
 
-        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/api/ws/${remoteProtocol}/${hostUid}`;
 
         const tunnel = new Guacamole.WebSocketTunnel(wsUrl);
@@ -43,13 +39,13 @@ export default function RDPClient({
         // cursor layer can sit above it).  This buries the canvas behind
         // any ancestor with a background.  Override to 0 — the cursor
         // layer (z-index: 1) still renders on top correctly.
-        const fixStyle = document.createElement("style");
-        fixStyle.textContent = ".rdp-canvas-fix canvas { z-index: 0 !important; }";
+        const fixStyle = document.createElement('style');
+        fixStyle.textContent = '.rdp-canvas-fix canvas { z-index: 0 !important; }';
         document.head.appendChild(fixStyle);
-        displayEl.classList.add("rdp-canvas-fix");
+        displayEl.classList.add('rdp-canvas-fix');
 
         if (containerRef.current) {
-          containerRef.current.innerHTML = "";
+          containerRef.current.innerHTML = '';
           containerRef.current.appendChild(displayEl);
         }
 
@@ -77,12 +73,12 @@ export default function RDPClient({
 
         // Error handling
         client.onerror = (err: any) => {
-          console.error("Guacamole client error:", err);
+          console.error('Guacamole client error:', err);
           setConnecting(false);
           setErrorText(formatGuacamoleError(err, remoteProtocol));
         };
         tunnel.onerror = (err: any) => {
-          console.error("Guacamole tunnel error:", err);
+          console.error('Guacamole tunnel error:', err);
           setConnecting(false);
           setErrorText(formatGuacamoleError(err, remoteProtocol));
         };
@@ -129,12 +125,12 @@ export default function RDPClient({
           keyboard.onkeydown = null;
           keyboard.onkeyup = null;
           document.head.removeChild(fixStyle);
-          displayEl.classList.remove("rdp-canvas-fix");
+          displayEl.classList.remove('rdp-canvas-fix');
           client.disconnect();
           tunnel.disconnect();
         };
       } catch (err) {
-        console.error("Guacamole init error:", err);
+        console.error('Guacamole init error:', err);
       }
     };
 
@@ -151,19 +147,19 @@ export default function RDPClient({
   }, [hostUid, osUserUid, remoteProtocol]);
 
   return (
-    <div style={{ width: "100%", height: "100%", background: "#000", position: "relative" }}>
+    <div style={{ width: '100%', height: '100%', background: '#000', position: 'relative' }}>
       {connecting && (
         <div
           style={{
-            position: "absolute",
+            position: 'absolute',
             inset: 0,
             zIndex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#aaa",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#aaa',
             fontSize: 16,
-            pointerEvents: "none",
+            pointerEvents: 'none',
           }}
         >
           正在连接...
@@ -172,17 +168,17 @@ export default function RDPClient({
       {errorText && (
         <div
           style={{
-            position: "absolute",
+            position: 'absolute',
             inset: 0,
             zIndex: 2,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#ffccc7",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#ffccc7',
             fontSize: 15,
             padding: 24,
-            textAlign: "center",
-            pointerEvents: "none",
+            textAlign: 'center',
+            pointerEvents: 'none',
           }}
         >
           {errorText}
@@ -191,19 +187,19 @@ export default function RDPClient({
       <div
         ref={containerRef}
         style={{
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       />
     </div>
   );
 }
 
-function formatGuacamoleError(err: any, protocol: "rdp" | "vnc") {
+function formatGuacamoleError(err: any, protocol: 'rdp' | 'vnc') {
   const code = err?.code;
   const message = err?.message;
   const protocolName = protocol.toUpperCase();
@@ -222,5 +218,5 @@ function formatGuacamoleError(err: any, protocol: "rdp" | "vnc") {
   if (code === 0x0301 || code === 0x0303) {
     return `${protocolName} 认证失败或权限不足，请检查系统用户密码。`;
   }
-  return message || `${protocolName} 连接失败，错误码：${code ?? "unknown"}`;
+  return message || `${protocolName} 连接失败，错误码：${code ?? 'unknown'}`;
 }

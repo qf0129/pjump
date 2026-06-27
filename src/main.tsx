@@ -1,16 +1,16 @@
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { routes } from "./routes";
-import { App, ConfigProvider, Empty, type GetProp, type ThemeConfig } from "antd";
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import { routes } from './routes';
+import { App, ConfigProvider, Empty, type GetProp, type ThemeConfig } from 'antd';
 
 const customTheme: ThemeConfig = {
   token: {
-    colorPrimary: "#0052d9",
-    colorPrimaryActive: "#0040b0",
-    colorPrimaryHover: "#3c84e2",
+    colorPrimary: '#0052d9',
+    colorPrimaryActive: '#0040b0',
+    colorPrimaryHover: '#3c84e2',
     borderRadius: 2,
-    colorBgLayout: "#f0f2f5",
+    colorBgLayout: '#f0f2f5',
     fontFamily: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif`,
   },
   components: {
@@ -38,15 +38,15 @@ const customTheme: ThemeConfig = {
   },
 };
 
-const renderEmpty: GetProp<typeof ConfigProvider, "renderEmpty"> = () => {
+const renderEmpty: GetProp<typeof ConfigProvider, 'renderEmpty'> = () => {
   return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="" />;
 };
 
 const router = createBrowserRouter(routes);
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <ConfigProvider theme={customTheme} renderEmpty={renderEmpty}>
-    <App style={{ height: "100%" }}>
+    <App style={{ height: '100%' }}>
       <RouterProvider router={router} />
     </App>
-  </ConfigProvider>,
+  </ConfigProvider>
 );

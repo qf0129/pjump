@@ -1,13 +1,9 @@
-import api from "@/apis/apis";
-import type { Group, Host } from "@/utils/type";
-import {
-  DownOutlined,
-  LoadingOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
-import { Flex } from "antd";
-import { useState } from "react";
-import styled from "styled-components";
+import api from '@/apis/apis';
+import type { Group, Host } from '@/utils/type';
+import { DownOutlined, LoadingOutlined, RightOutlined } from '@ant-design/icons';
+import { Flex } from 'antd';
+import { useState } from 'react';
+import styled from 'styled-components';
 
 const HostGroupContainer = styled.div``;
 const GroupRow = styled(Flex)`
@@ -92,9 +88,9 @@ export const HostGroup = ({ group, onSelectHost }: HostGroupProps) => {
       return <LoadingOutlined />;
     } else {
       if (expanded) {
-        return <DownOutlined style={{ color: "#666" }} />;
+        return <DownOutlined style={{ color: '#666' }} />;
       } else {
-        return <RightOutlined style={{ color: "#666" }} />;
+        return <RightOutlined style={{ color: '#666' }} />;
       }
     }
   };

@@ -1,25 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
-  Space,
-  Switch,
-  Table,
-  type TableColumnsType,
-} from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import {
-  Apis,
-  type ReqQueryUser,
-  type ReqCreateUser,
-  type ReqUpdateUser,
-} from "@/apis/apis";
-import type { User } from "@/utils/type";
-import useApp from "antd/es/app/useApp";
+import { useEffect, useState, useCallback } from 'react';
+import { Button, Flex, Form, Input, Modal, Popconfirm, Space, Switch, Table, type TableColumnsType } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Apis, type ReqQueryUser, type ReqCreateUser, type ReqUpdateUser } from '@/apis/apis';
+import type { User } from '@/utils/type';
+import useApp from 'antd/es/app/useApp';
 
 export default function UserPage() {
   const app = useApp();
@@ -50,7 +34,7 @@ export default function UserPage() {
         })
         .finally(() => setLoading(false));
     },
-    [page, pageSize, app.message],
+    [page, pageSize, app.message]
   );
 
   useEffect(() => {
@@ -87,7 +71,7 @@ export default function UserPage() {
         const data: ReqUpdateUser = { Uid: editingUser.Uid!, ...values };
         Apis.UpdateUser(data).then((res) => {
           if (res.Code === 0) {
-            app.message.success("更新成功");
+            app.message.success('更新成功');
             setModalOpen(false);
             fetchList();
           } else {
@@ -98,7 +82,7 @@ export default function UserPage() {
         const data: ReqCreateUser = values;
         Apis.CreateUser(data).then((res) => {
           if (res.Code === 0) {
-            app.message.success("创建成功");
+            app.message.success('创建成功');
             setModalOpen(false);
             fetchList();
           } else {
@@ -112,7 +96,7 @@ export default function UserPage() {
   const handleDelete = (uid: string) => {
     Apis.DeleteUser({ Uid: uid }).then((res) => {
       if (res.Code === 0) {
-        app.message.success("删除成功");
+        app.message.success('删除成功');
         fetchList();
       } else {
         app.message.warning(res.Msg);
@@ -121,42 +105,28 @@ export default function UserPage() {
   };
 
   const columns: TableColumnsType<User> = [
-    { title: "用户名", dataIndex: "Username", key: "Username" },
-    { title: "昵称", dataIndex: "Nickname", key: "Nickname" },
-    { title: "邮箱", dataIndex: "Email", key: "Email" },
-    { title: "手机号", dataIndex: "Phone", key: "Phone" },
+    { title: '用户名', dataIndex: 'Username', key: 'Username' },
+    { title: '昵称', dataIndex: 'Nickname', key: 'Nickname' },
+    { title: '邮箱', dataIndex: 'Email', key: 'Email' },
+    { title: '手机号', dataIndex: 'Phone', key: 'Phone' },
     {
-      title: "管理员",
-      dataIndex: "IsAdmin",
-      key: "IsAdmin",
+      title: '管理员',
+      dataIndex: 'IsAdmin',
+      key: 'IsAdmin',
       width: 80,
-      render: (v: boolean) => (v ? "✔" : ""),
+      render: (v: boolean) => (v ? '✔' : ''),
     },
     {
-      title: "操作",
-      key: "actions",
+      title: '操作',
+      key: 'actions',
       width: 160,
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => openEditModal(record)}
-          >
+          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => openEditModal(record)}>
             编辑
           </Button>
-          <Popconfirm
-            title="确定删除该用户？"
-            onConfirm={() => handleDelete(record.Uid!)}
-          >
-            <Button
-              type="link"
-              size="small"
-              danger
-              icon={<DeleteOutlined />}
-              disabled={record.Username === "admin"}
-            >
+          <Popconfirm title="确定删除该用户？" onConfirm={() => handleDelete(record.Uid!)}>
+            <Button type="link" size="small" danger icon={<DeleteOutlined />} disabled={record.Username === 'admin'}>
               删除
             </Button>
           </Popconfirm>
@@ -166,18 +136,9 @@ export default function UserPage() {
   ];
 
   return (
-    <div style={{ padding: 24, height: "100%", overflow: "auto" }}>
-      <Flex
-        align="center"
-        justify="space-between"
-        gap={12}
-        style={{ marginBottom: 24 }}
-      >
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={openCreateModal}
-        >
+    <div style={{ padding: 24, height: '100%', overflow: 'auto' }}>
+      <Flex align="center" justify="space-between" gap={12} style={{ marginBottom: 24 }}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
           创建用户
         </Button>
       </Flex>
@@ -197,19 +158,9 @@ export default function UserPage() {
         }}
       />
 
-      <Modal
-        title={editingUser ? "编辑用户" : "创建用户"}
-        open={modalOpen}
-        onOk={handleModalOk}
-        onCancel={() => setModalOpen(false)}
-        destroyOnHidden
-      >
+      <Modal title={editingUser ? '编辑用户' : '创建用户'} open={modalOpen} onOk={handleModalOk} onCancel={() => setModalOpen(false)} destroyOnHidden>
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item
-            name="Username"
-            label="用户名"
-            rules={[{ required: true, message: "请输入用户名" }]}
-          >
+          <Form.Item name="Username" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
             <Input disabled={!!editingUser} />
           </Form.Item>
           <Form.Item name="Nickname" label="昵称">
@@ -221,16 +172,8 @@ export default function UserPage() {
           <Form.Item name="Phone" label="手机号">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="Password"
-            label="密码"
-            rules={
-              editingUser
-                ? undefined
-                : [{ required: true, message: "请输入密码" }]
-            }
-          >
-            <Input.Password placeholder={editingUser ? "留空则不修改" : ""} />
+          <Form.Item name="Password" label="密码" rules={editingUser ? undefined : [{ required: true, message: '请输入密码' }]}>
+            <Input.Password placeholder={editingUser ? '留空则不修改' : ''} />
           </Form.Item>
           <Form.Item name="IsAdmin" label="管理员" valuePropName="checked">
             <Switch />

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useCallback } from "react";
-import { Terminal } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
-import "@xterm/xterm/css/xterm.css";
+import { useEffect, useRef, useCallback } from 'react';
+import { Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
+import '@xterm/xterm/css/xterm.css';
 
 interface SSHTerminalProps {
   hostUid: string;
@@ -13,7 +13,7 @@ interface WSMessage {
   data?: string;
 }
 
-const backgroundColor = "#111";
+const backgroundColor = '#111';
 
 export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -28,10 +28,10 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
       if (dims && wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(
           JSON.stringify({
-            type: "resize",
+            type: 'resize',
             rows: dims.rows,
             cols: dims.cols,
-          }),
+          })
         );
       }
     }
@@ -41,13 +41,13 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
     if (!terminalRef.current) return;
     const term = new Terminal({
       cursorBlink: true,
-      cursorStyle: "block",
+      cursorStyle: 'block',
       fontSize: 16,
       fontFamily: '"Cascadia Code", "Fira Code", Menlo, Monaco, "Courier New", monospace',
       theme: {
         background: backgroundColor,
-        foreground: "#e0e0e0",
-        cursor: "#e0e0e0",
+        foreground: '#e0e0e0',
+        cursor: '#e0e0e0',
       },
       allowTransparency: false,
       cols: 80,
@@ -62,7 +62,7 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
     termRef.current = term;
     fitAddonRef.current = fitAddon;
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}?u=${encodeURIComponent(osUserUid)}`;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
@@ -74,9 +74,9 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
     ws.onmessage = (event) => {
       try {
         const msg: WSMessage = JSON.parse(event.data);
-        if (msg.type === "output" && msg.data) {
+        if (msg.type === 'output' && msg.data) {
           term.write(msg.data);
-        } else if (msg.type === "error") {
+        } else if (msg.type === 'error') {
           term.write(`\r\n\x1b[31mError: ${msg.data}\x1b[0m\r\n`);
         }
       } catch {
@@ -86,17 +86,17 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
     };
 
     ws.onclose = () => {
-      term.write("\r\n\x1b[33mConnection closed\x1b[0m\r\n");
+      term.write('\r\n\x1b[33mConnection closed\x1b[0m\r\n');
     };
 
     ws.onerror = () => {
-      term.write("\r\n\x1b[31mWebSocket error\x1b[0m\r\n");
+      term.write('\r\n\x1b[31mWebSocket error\x1b[0m\r\n');
     };
 
     // Handle user input
     term.onData((data) => {
       if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: "input", data }));
+        ws.send(JSON.stringify({ type: 'input', data }));
       }
     });
 
@@ -109,19 +109,19 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
     }
 
     // Resize on window resize
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
 
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
       ws.close();
       term.dispose();
     };
   }, [hostUid, osUserUid, handleResize]);
 
   return (
-    <div style={{ background: backgroundColor, width: "100%", height: "100%", padding: 8 }}>
-      <div ref={terminalRef} style={{ width: "100%", height: "100%" }} />
+    <div style={{ background: backgroundColor, width: '100%', height: '100%', padding: 8 }}>
+      <div ref={terminalRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );
 }

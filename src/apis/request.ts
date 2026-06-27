@@ -1,4 +1,4 @@
-import axios, { AxiosError, type AxiosInstance } from "axios";
+import axios, { AxiosError, type AxiosInstance } from 'axios';
 
 export interface PageObject<T> {
   List: T[];
@@ -19,25 +19,21 @@ const request: AxiosInstance = axios.create({
 
 request.interceptors.response.use(
   (response) => {
-    console.debug(
-      "RequestApi >>>",
-      response.request.responseURL,
-      response.data,
-    );
+    console.debug('RequestApi >>>', response.request.responseURL, response.data);
     if (response.data.Code != 0) {
       if (response.data.Code === 401002) {
-        window.location.href = "/signin";
+        window.location.href = '/signin';
       }
     }
     return Promise.resolve(response.data);
   },
   (error: AxiosError) => {
-    console.log("RequestError:", error);
+    console.log('RequestError:', error);
     if (error.message) {
-      console.debug("RequestError:", error.message);
+      console.debug('RequestError:', error.message);
     }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default request;

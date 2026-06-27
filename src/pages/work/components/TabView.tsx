@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import React, { useImperativeHandle, useRef, useState } from "react";
-import { Tabs, type TabsProps } from "antd";
-import { Term } from "./Term";
-import type { Host } from "@/utils/type";
+import styled from 'styled-components';
+import React, { useImperativeHandle, useRef, useState } from 'react';
+import { Tabs, type TabsProps } from 'antd';
+import { Term } from './Term';
+import type { Host } from '@/utils/type';
 
 const TabsContainer = styled.div`
   padding-left: 240px;
@@ -49,11 +49,11 @@ type TabItem = {
 
 const initialItems: TabItem[] = [];
 
-const stylesObject: TabsProps["styles"] = {
-  item: { border: "none", color: "white" },
-  header: { margin: "0", border: "none" },
-  content: { height: "100%" },
-  root: { height: "100%" },
+const stylesObject: TabsProps['styles'] = {
+  item: { border: 'none', color: 'white' },
+  header: { margin: '0', border: 'none' },
+  content: { height: '100%' },
+  root: { height: '100%' },
 };
 
 export interface TabViewRef {
@@ -65,7 +65,7 @@ type TabViewProps = {
 };
 
 export const TabView = ({ ref }: TabViewProps) => {
-  const [activeKey, setActiveKey] = useState("");
+  const [activeKey, setActiveKey] = useState('');
   const [items, setItems] = useState(initialItems);
   const newTabIndex = useRef(0);
 
@@ -73,7 +73,7 @@ export const TabView = ({ ref }: TabViewProps) => {
     addTab: (host: Host) => {
       const newActiveKey = `${host.Name}-${newTabIndex.current++}`;
       const newPanes = [...items];
-      newPanes.push({ key: newActiveKey, label: host.Name || host.Ip || host.Uid || "", children: <Term /> });
+      newPanes.push({ key: newActiveKey, label: host.Name || host.Ip || host.Uid || '', children: <Term /> });
       setItems(newPanes);
       setActiveKey(newActiveKey);
     },
@@ -103,8 +103,8 @@ export const TabView = ({ ref }: TabViewProps) => {
     setActiveKey(newActiveKey);
   };
 
-  const onEdit = (targetKey: React.MouseEvent | React.KeyboardEvent | string, action: "add" | "remove") => {
-    if (action === "remove") {
+  const onEdit = (targetKey: React.MouseEvent | React.KeyboardEvent | string, action: 'add' | 'remove') => {
+    if (action === 'remove') {
       remove(targetKey);
     }
   };
