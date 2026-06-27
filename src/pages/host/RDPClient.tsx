@@ -4,13 +4,19 @@ import { useEffect, useRef, useState } from "react";
 interface RDPTabProps {
   hostUid: string;
   osUserUid: string;
+  protocol?: "rdp" | "vnc";
 }
 
-export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
+export default function RDPClient({
+  hostUid,
+  osUserUid,
+  protocol: remoteProtocol = "rdp",
+}: RDPTabProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const tunnelRef = useRef<Guacamole.Tunnel>(null);
   const clientRef = useRef<Guacamole.Client>(null);
   const [connecting, setConnecting] = useState(true);
+  const [errorText, setErrorText] = useState("");
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -20,7 +26,7 @@ export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
         const Guacamole = (await import("guacamole-common-js")).default;
 
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsUrl = `${protocol}//${window.location.host}/api/ws/rdp/${hostUid}`;
+        const wsUrl = `${protocol}//${window.location.host}/api/ws/${remoteProtocol}/${hostUid}`;
 
         const tunnel = new Guacamole.WebSocketTunnel(wsUrl);
         tunnelRef.current = tunnel;
@@ -72,9 +78,13 @@ export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
         // Error handling
         client.onerror = (err: any) => {
           console.error("Guacamole client error:", err);
+          setConnecting(false);
+          setErrorText(formatGuacamoleError(err, remoteProtocol));
         };
         tunnel.onerror = (err: any) => {
           console.error("Guacamole tunnel error:", err);
+          setConnecting(false);
+          setErrorText(formatGuacamoleError(err, remoteProtocol));
         };
 
         // Send display size to guacd once the container has real dimensions.
@@ -138,7 +148,7 @@ export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
       if (clientRef.current) clientRef.current.disconnect();
       if (tunnelRef.current) tunnelRef.current.disconnect();
     };
-  }, [hostUid, osUserUid]);
+  }, [hostUid, osUserUid, remoteProtocol]);
 
   return (
     <div style={{ width: "100%", height: "100%", background: "#000", position: "relative" }}>
@@ -159,6 +169,25 @@ export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
           正在连接...
         </div>
       )}
+      {errorText && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 2,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#ffccc7",
+            fontSize: 15,
+            padding: 24,
+            textAlign: "center",
+            pointerEvents: "none",
+          }}
+        >
+          {errorText}
+        </div>
+      )}
       <div
         ref={containerRef}
         style={{
@@ -172,4 +201,26 @@ export default function RDPClient({ hostUid, osUserUid }: RDPTabProps) {
       />
     </div>
   );
+}
+
+function formatGuacamoleError(err: any, protocol: "rdp" | "vnc") {
+  const code = err?.code;
+  const message = err?.message;
+  const protocolName = protocol.toUpperCase();
+  if (code === 0x0207) {
+    return `${protocolName} 服务不可达，请检查目标主机 IP、端口、防火墙以及服务监听地址。`;
+  }
+  if (code === 0x0208) {
+    return `${protocolName} 服务当前不可用，请检查目标服务状态。`;
+  }
+  if (code === 0x0202) {
+    return `${protocolName} 连接超时，请检查网络连通性和端口。`;
+  }
+  if (code === 0x0203) {
+    return `${protocolName} 上游服务返回错误，请检查账号密码或服务配置。`;
+  }
+  if (code === 0x0301 || code === 0x0303) {
+    return `${protocolName} 认证失败或权限不足，请检查系统用户密码。`;
+  }
+  return message || `${protocolName} 连接失败，错误码：${code ?? "unknown"}`;
 }

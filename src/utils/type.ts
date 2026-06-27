@@ -40,6 +40,7 @@ export type OsUser = BaseModel & {
     Name: string
     User: string
     Password: string
+    VncPassword: string
     PrivateKey: string
     PrivateKeyPsd: string
 }

@@ -169,6 +169,7 @@ export default function HostFormModal({
       name: src.Name || "",
       user: src.User || "",
       password: "",
+      vncPassword: "",
       privateKey: "",
       privateKeyPsd: "",
     });
@@ -188,6 +189,7 @@ export default function HostFormModal({
           if (vals.user) data.User = vals.user;
         }
         if (vals.password) data.Password = vals.password;
+        if (vals.vncPassword) data.VncPassword = vals.vncPassword;
         if (vals.privateKey) data.PrivateKey = vals.privateKey;
         if (vals.privateKeyPsd) data.PrivateKeyPsd = vals.privateKeyPsd;
         const res = await Apis.UpdateOsUser(data);
@@ -213,6 +215,7 @@ export default function HostFormModal({
           Name: vals.name || vals.user,
           User: vals.user,
           Password: vals.password || "",
+          VncPassword: vals.vncPassword || "",
           PrivateKey: vals.privateKey || "",
           PrivateKeyPsd: vals.privateKeyPsd || "",
         });
@@ -498,6 +501,15 @@ export default function HostFormModal({
             <Input.Password
               placeholder={
                 osUserModalMode === "edit" ? "留空则不修改" : "登录密码"
+              }
+            />
+          </Form.Item>
+          <Form.Item name="vncPassword" label="VNC 密码">
+            <Input.Password
+              placeholder={
+                osUserModalMode === "edit"
+                  ? "留空则不修改"
+                  : "留空则使用登录密码"
               }
             />
           </Form.Item>

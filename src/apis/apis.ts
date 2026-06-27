@@ -56,6 +56,7 @@ export type ReqCreateOsUser = {
   Name: string;
   User: string;
   Password?: string;
+  VncPassword?: string;
   PrivateKey?: string;
   PrivateKeyPsd?: string;
   HostUid?: string;
@@ -66,6 +67,7 @@ export type ReqUpdateOsUser = {
   Name?: string;
   User?: string;
   Password?: string;
+  VncPassword?: string;
   PrivateKey?: string;
   PrivateKeyPsd?: string;
 };
@@ -250,6 +252,10 @@ export const Apis = {
   GetRDPWebSocketUrl: (hostUid: string, osUserUid: string): string => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     return `${protocol}//${window.location.host}/api/ws/rdp/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
+  },
+  GetVNCWebSocketUrl: (hostUid: string, osUserUid: string): string => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    return `${protocol}//${window.location.host}/api/ws/vnc/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
   },
 };
 
