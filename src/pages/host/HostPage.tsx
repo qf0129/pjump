@@ -133,14 +133,10 @@ export default function HostPage() {
             <Col key={host.Uid} xs={24} sm={12} lg={8} xl={6}>
               <Card size="small" styles={{ body: { borderRadius: 10 } }}>
                 <Flex align="center" justify="space-between">
-                  <Typography.Text strong>{host.Name || '未命名'}</Typography.Text>
+                  <Typography.Text strong ellipsis>
+                    {host.Name || '未命名'}
+                  </Typography.Text>
                   <Space size={0}>
-                    {isAdmin && (
-                      <>
-                        <Button type="text" size="small" icon={<EditOutlined />} onClick={() => openEditModal(host)} />
-                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDeleteClick(host)} />
-                      </>
-                    )}
                     {hasSSH && <Tag color="blue">SSH</Tag>}
                     {hasRDP && <Tag color="green">RDP</Tag>}
                     {hasVNC && <Tag color="orange">VNC</Tag>}
@@ -148,12 +144,20 @@ export default function HostPage() {
                   </Space>
                 </Flex>
                 <Flex align="center" justify="space-between" style={{ marginTop: 12 }}>
-                  <Typography.Text type="secondary" copyable>
+                  <Typography.Text type="secondary" copyable ellipsis>
                     {host.Ip}
                   </Typography.Text>
-                  <Button color="primary" variant="filled" size="small" onClick={() => window.open('/host/' + host.Uid, '_blank')}>
-                    连接 ➔
-                  </Button>
+                  <Space size={4}>
+                    {isAdmin && (
+                      <>
+                        <Button type="text" size="small" icon={<EditOutlined />} onClick={() => openEditModal(host)} />
+                        <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDeleteClick(host)} />
+                      </>
+                    )}
+                    <Button color="primary" variant="filled" size="small" onClick={() => window.open('/host/' + host.Uid, '_blank')}>
+                      连接 ➔
+                    </Button>
+                  </Space>
                 </Flex>
                 <Flex justify="right"></Flex>
               </Card>

@@ -191,36 +191,27 @@ export const Apis = {
   DeleteOsUser: (data: ReqDeleteOsUser): Promise<Response<null>> => request.post('/api/DeleteOsUser', data),
 
   // HostOsUser
-  QueryHostOsUser: (data: ReqQueryHostOsUser): Promise<Response<PageObject<OsUser>>> =>
-    request.post('/api/QueryHostOsUser', data),
+  QueryHostOsUser: (data: ReqQueryHostOsUser): Promise<Response<PageObject<OsUser>>> => request.post('/api/QueryHostOsUser', data),
   CreateHostOsUser: (data: ReqCreateHostOsUser): Promise<Response<null>> => request.post('/api/CreateHostOsUser', data),
   DeleteHostOsUser: (data: ReqDeleteHostOsUser): Promise<Response<null>> => request.post('/api/DeleteHostOsUser', data),
 
   // Group
   QueryUserGroup: (data: object): Promise<Response<Group[]>> => request.post('/api/QueryUserGroup', data),
-  QueryGroupHost: (data: ReqQueryGroupHost): Promise<Response<PageObject<Host>>> =>
-    request.post('/api/QueryGroupHost', data),
+  QueryGroupHost: (data: ReqQueryGroupHost): Promise<Response<PageObject<Host>>> => request.post('/api/QueryGroupHost', data),
 
   // Audit
-  QueryOperationRecord: (data: ReqQueryOperationRecord): Promise<Response<PageObject<OperationRecord>>> =>
-    request.post('/api/QueryOperationRecord', data),
-  QueryLoginRecord: (data: ReqQueryLoginRecord): Promise<Response<PageObject<LoginRecord>>> =>
-    request.post('/api/QueryLoginRecord', data),
-  QuerySessionRecord: (data: ReqQuerySessionRecord): Promise<Response<PageObject<SessionRecord>>> =>
-    request.post('/api/QuerySessionRecord', data),
+  QueryOperationRecord: (data: ReqQueryOperationRecord): Promise<Response<PageObject<OperationRecord>>> => request.post('/api/QueryOperationRecord', data),
+  QueryLoginRecord: (data: ReqQueryLoginRecord): Promise<Response<PageObject<LoginRecord>>> => request.post('/api/QueryLoginRecord', data),
+  QuerySessionRecord: (data: ReqQuerySessionRecord): Promise<Response<PageObject<SessionRecord>>> => request.post('/api/QuerySessionRecord', data),
 
   // WebSocket
-  GetSSHWebSocketUrl: (hostUid: string, osUserUid: string): string => {
+  GetWebSocketUrl: (remoteProtocol: 'ssh' | 'rdp' | 'vnc', hostUid: string, osUserUid?: string): string => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
-  },
-  GetRDPWebSocketUrl: (hostUid: string, osUserUid: string): string => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/api/ws/rdp/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
-  },
-  GetVNCWebSocketUrl: (hostUid: string, osUserUid: string): string => {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.host}/api/ws/vnc/${hostUid}?osUserUid=${encodeURIComponent(osUserUid)}`;
+    let url = `${protocol}//${window.location.host}/api/ws/${remoteProtocol}/${hostUid}`;
+    if (osUserUid) {
+      url += `?u=${encodeURIComponent(osUserUid)}`;
+    }
+    return url;
   },
 };
 

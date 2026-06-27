@@ -1,3 +1,4 @@
+import Apis from '@/apis/apis';
 import { useEffect, useRef, useState } from 'react';
 
 // RDP Tab component using Guacamole
@@ -20,10 +21,7 @@ export default function GuacdClient({ hostUid, osUserUid, protocol }: GuacdClien
     const initGuacamole = async () => {
       try {
         const Guacamole = (await import('guacamole-common-js')).default;
-
-        const connProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${connProtocol}//${window.location.host}/api/ws/${protocol}/${hostUid}`;
-
+        const wsUrl = Apis.GetWebSocketUrl(protocol, hostUid);
         const tunnel = new Guacamole.WebSocketTunnel(wsUrl);
         tunnelRef.current = tunnel;
 

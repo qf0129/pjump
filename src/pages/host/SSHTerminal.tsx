@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
+import Apis from '@/apis/apis';
 
 interface SSHTerminalProps {
   hostUid: string;
@@ -62,9 +63,7 @@ export default function SSHTerminal({ hostUid, osUserUid }: SSHTerminalProps) {
     termRef.current = term;
     fitAddonRef.current = fitAddon;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/api/ws/ssh/${hostUid}?u=${encodeURIComponent(osUserUid)}`;
-    const ws = new WebSocket(wsUrl);
+    const ws = new WebSocket(Apis.GetWebSocketUrl('ssh', hostUid, osUserUid));
     wsRef.current = ws;
 
     ws.onopen = () => {
