@@ -29,33 +29,35 @@ export default function ClientPage() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([Apis.QueryHost({ Uid: uid }), Apis.QueryHostOsUser({ HostUid: uid! })]).then(([hostData, osUserData]) => {
-      if (hostData.Code === 0 && hostData.Data.List.length > 0) {
-        const h = hostData.Data.List[0];
-        setHost(h);
-        document.title = h.Name || h.Ip || uid || '连接中';
+    Promise.all([Apis.QueryHost({ Uid: uid }), Apis.QueryHostOsUser({ HostUid: uid! })]).then(
+      ([hostData, osUserData]) => {
+        if (hostData.Code === 0 && hostData.Data.List.length > 0) {
+          const h = hostData.Data.List[0];
+          setHost(h);
+          document.title = h.Name || h.Ip || uid || '连接中';
 
-        const users = osUserData.Code === 0 ? (osUserData.Data.List ?? []) : [];
-        setOsUsers(users);
+          const users = osUserData.Code === 0 ? (osUserData.Data.List ?? []) : [];
+          setOsUsers(users);
 
-        // 可用协议
-        const protocols: Protocol[] = [];
-        if ((h.SSHPort ?? 0) > 0) protocols.push('ssh');
-        if ((h.RDPPort ?? 0) > 0) protocols.push('rdp');
-        if ((h.VNCPort ?? 0) > 0) protocols.push('vnc');
+          // 可用协议
+          const protocols: Protocol[] = [];
+          if ((h.SSHPort ?? 0) > 0) protocols.push('ssh');
+          if ((h.RDPPort ?? 0) > 0) protocols.push('rdp');
+          if ((h.VNCPort ?? 0) > 0) protocols.push('vnc');
 
-        // 单协议 + 单用户 → 自动连接
-        if (protocols.length === 1 && users.length === 1) {
-          setConnProtocol(protocols[0]);
-          setConnOsUserUid(users[0].Uid);
-          setConnecting(true);
-        } else {
-          setSelProtocol(protocols[0] || null);
-          setSelOsUserUid(users[0]?.Uid || null);
+          // 单协议 + 单用户 → 自动连接
+          if (protocols.length === 1 && users.length === 1) {
+            setConnProtocol(protocols[0]);
+            setConnOsUserUid(users[0].Uid);
+            setConnecting(true);
+          } else {
+            setSelProtocol(protocols[0] || null);
+            setSelOsUserUid(users[0]?.Uid || null);
+          }
         }
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
   }, [uid]);
 
   const handleConnect = () => {
@@ -68,7 +70,8 @@ export default function ClientPage() {
   // 连接中：更新 favicon、阻止意外关闭
   useEffect(() => {
     if (!connecting || !connProtocol) return;
-    const link: HTMLLinkElement = (document.querySelector("link[rel~='icon']") as HTMLLinkElement) || document.createElement('link');
+    const link: HTMLLinkElement =
+      (document.querySelector("link[rel~='icon']") as HTMLLinkElement) || document.createElement('link');
     link.rel = 'icon';
     if (!link.parentElement) document.head.appendChild(link);
     link.href = connProtocol === 'ssh' ? '/ssh.svg' : '/rdp.svg';
@@ -84,7 +87,8 @@ export default function ClientPage() {
 
   const clientView = () => {
     if (!connProtocol || !host || !connOsUserUid) return null;
-    if (connProtocol === 'vnc' || connProtocol === 'rdp') return <GuacdClient hostUid={host.Uid!} osUserUid={connOsUserUid} protocol={connProtocol} />;
+    if (connProtocol === 'vnc' || connProtocol === 'rdp')
+      return <GuacdClient hostUid={host.Uid!} osUserUid={connOsUserUid} protocol={connProtocol} />;
     return <SSHTerminal hostUid={host.Uid!} osUserUid={connOsUserUid} />;
   };
 
@@ -135,7 +139,7 @@ export default function ClientPage() {
             {osUsers.length ? (
               <Radio.Group value={selOsUserUid} onChange={(e) => setSelOsUserUid(e.target.value)} buttonStyle="solid">
                 {osUsers.map((u) => (
-                  <Radio.Button key={u.Uid} value={u.Uid}>{`${u.Name || u.User} (${u.User})`}</Radio.Button>
+                  <Radio.Button key={u.Uid} value={u.Uid}>{`${u.Name || u.Username} (${u.Username})`}</Radio.Button>
                 ))}
               </Radio.Group>
             ) : (

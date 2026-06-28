@@ -46,7 +46,7 @@ export type ReqDeleteHost = {
 
 export type ReqCreateOsUser = {
   Name: string;
-  User: string;
+  Username: string;
   Password?: string;
   VncPassword?: string;
   PrivateKey?: string;
@@ -57,7 +57,7 @@ export type ReqCreateOsUser = {
 export type ReqUpdateOsUser = {
   Uid: string;
   Name?: string;
-  User?: string;
+  Username?: string;
   Password?: string;
   VncPassword?: string;
   PrivateKey?: string;
@@ -68,7 +68,7 @@ export type ReqQueryOsUser = {
   Page?: number;
   PageSize?: number;
   Name?: string;
-  User?: string;
+  Username?: string;
 };
 
 export type ReqDeleteOsUser = {

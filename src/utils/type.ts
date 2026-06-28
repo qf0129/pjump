@@ -37,7 +37,7 @@ export type Host = BaseModel & {
 
 export type OsUser = BaseModel & {
   Name: string;
-  User: string;
+  Username: string;
   Password: string;
   VncPassword: string;
   PrivateKey: string;
