@@ -108,6 +108,7 @@ export type ReqUpdatePassword = {
 
 export type ReqQueryUser = {
   Username?: string;
+  Search?: string;
   Page?: number;
   PageSize?: number;
 };

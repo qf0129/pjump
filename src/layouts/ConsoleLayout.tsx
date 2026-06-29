@@ -18,11 +18,11 @@ const menuItems = [
   {
     key: 'audit',
     icon: <AuditOutlined />,
-    label: '审计管理',
+    label: '日志审计',
     children: [
-      { key: 'audit/session', label: '会话记录' },
-      { key: 'audit/operation', label: '操作记录' },
-      { key: 'audit/login', label: '登录记录' },
+      { key: 'audit/session', label: '主机会话' },
+      { key: 'audit/operation', label: '网站操作' },
+      { key: 'audit/login', label: '网站登录' },
     ],
   },
 ];

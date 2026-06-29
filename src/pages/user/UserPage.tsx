@@ -12,17 +12,22 @@ export default function UserPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [form] = Form.useForm();
 
   const fetchList = useCallback(
-    (p?: number, ps?: number) => {
+    (p?: number, ps?: number, kw?: string) => {
       setLoading(true);
+      const keyword = kw !== undefined ? kw : search;
       const params: ReqQueryUser = {
         Page: p ?? page,
         PageSize: ps ?? pageSize,
       };
+      if (keyword) {
+        params.Search = keyword;
+      }
       Apis.QueryUser(params)
         .then((res) => {
           if (res.Code === 0) {
@@ -34,12 +39,18 @@ export default function UserPage() {
         })
         .finally(() => setLoading(false));
     },
-    [page, pageSize, app.message]
+    [page, pageSize, search, app.message]
   );
 
   useEffect(() => {
     fetchList();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+    fetchList(1, pageSize, value);
+  };
 
   const handlePageChange = (p: number, ps: number) => {
     setPage(p);
@@ -141,6 +152,14 @@ export default function UserPage() {
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
           创建用户
         </Button>
+        <Input.Search
+          placeholder="搜索用户名、昵称、邮箱、手机号..."
+          allowClear
+          value={search}
+          onSearch={handleSearch}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ maxWidth: 360 }}
+        />
       </Flex>
 
       <Table
