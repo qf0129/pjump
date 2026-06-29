@@ -5,6 +5,19 @@ import type { AccessGroup, Host } from '@/utils/type';
 
 const PAGE_SIZE = 24;
 
+export const renderProtocolTags = (host: Host) => {
+  const hasSSH = (host.SSHPort ?? 0) > 0;
+  const hasRDP = (host.RDPPort ?? 0) > 0;
+  const hasVNC = (host.VNCPort ?? 0) > 0;
+  return (
+    <Space size={0}>
+      {hasSSH && <Tag color="blue">SSH</Tag>}
+      {hasRDP && <Tag color="green">RDP</Tag>}
+      {hasVNC && <Tag color="orange">VNC</Tag>}
+      {!hasSSH && !hasRDP && !hasVNC && <Tag>未配置</Tag>}
+    </Space>
+  );
+};
 export default function HostPage() {
   const [groups, setGroups] = useState<AccessGroup[]>([]);
   const [selectedGroupUid, setSelectedGroupUid] = useState<string>();
@@ -12,7 +25,6 @@ export default function HostPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZE);
-  const [search, setSearch] = useState('');
   const [groupSearch, setGroupSearch] = useState('');
   const [groupLoading, setGroupLoading] = useState(false);
   const [hostLoading, setHostLoading] = useState(false);
@@ -35,18 +47,13 @@ export default function HostPage() {
       .finally(() => setGroupLoading(false));
   };
 
-  const fetchHosts = (groupUid: string, p: number, ps: number, s?: string) => {
-    const kw = s !== undefined ? s : search;
+  const fetchHosts = (groupUid: string, p: number, ps: number) => {
     setHostLoading(true);
-    Apis.QueryAccessGroupHost({ GroupUid: groupUid, Page: kw ? 1 : p, PageSize: kw ? 999 : ps })
+    Apis.QueryAccessGroupHost({ GroupUid: groupUid, Page: p, PageSize: ps })
       .then((res) => {
         if (res.Code === 0) {
-          const list = res.Data.List ?? [];
-          const filtered = kw
-            ? list.filter((host) => `${host.Name || ''} ${host.Ip || ''}`.toLowerCase().includes(kw.toLowerCase()))
-            : list;
-          setHosts(filtered);
-          setTotal(kw ? filtered.length : (res.Data.Total ?? 0));
+          setHosts(res.Data.List ?? []);
+          setTotal(res.Data.Total ?? 0);
         }
       })
       .finally(() => setHostLoading(false));
@@ -68,39 +75,17 @@ export default function HostPage() {
 
   const handleSelectGroup = (groupUid: string) => {
     setSelectedGroupUid(groupUid);
-    setSearch('');
   };
 
   const handleGroupSearch = (value: string) => {
     setGroupSearch(value);
-    setSearch('');
     fetchGroups(value);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    setPage(1);
-    if (selectedGroupUid) fetchHosts(selectedGroupUid, 1, pageSize, value);
   };
 
   const handlePageChange = (p: number, ps: number) => {
     setPage(p);
     setPageSize(ps);
     if (selectedGroupUid) fetchHosts(selectedGroupUid, p, ps);
-  };
-
-  const renderProtocolTags = (host: Host) => {
-    const hasSSH = (host.SSHPort ?? 0) > 0;
-    const hasRDP = (host.RDPPort ?? 0) > 0;
-    const hasVNC = (host.VNCPort ?? 0) > 0;
-    return (
-      <Space size={0}>
-        {hasSSH && <Tag color="blue">SSH:{host.SSHPort}</Tag>}
-        {hasRDP && <Tag color="green">RDP:{host.RDPPort}</Tag>}
-        {hasVNC && <Tag color="orange">VNC:{host.VNCPort}</Tag>}
-        {!hasSSH && !hasRDP && !hasVNC && <Tag>未配置</Tag>}
-      </Space>
-    );
   };
 
   return (
@@ -147,7 +132,7 @@ export default function HostPage() {
         </Spin>
       </div>
 
-      <div style={{ flex: 1, padding: 24, overflow: 'auto' }}>
+      <div style={{ flex: 1, padding: 16, overflow: 'auto' }}>
         <Flex align="center" justify="space-between" gap={12} style={{ marginBottom: 24 }}>
           <Space align="center">
             <Typography.Title level={4} style={{ margin: 0 }}>
@@ -159,15 +144,6 @@ export default function HostPage() {
               </Typography.Text>
             )}
           </Space>
-          <Input.Search
-            placeholder="搜索名称、地址..."
-            allowClear
-            value={search}
-            onSearch={handleSearch}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ maxWidth: 360 }}
-            disabled={!selectedGroupUid}
-          />
         </Flex>
 
         <Spin spinning={hostLoading}>

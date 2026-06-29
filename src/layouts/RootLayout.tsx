@@ -1,13 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
-import { Button, Dropdown, Form, Input, Layout, Modal, Space, type MenuProps } from 'antd';
-import { UserOutlined, LogoutOutlined, KeyOutlined } from '@ant-design/icons';
+import {
+  AutoComplete,
+  Button,
+  Dropdown,
+  Flex,
+  Form,
+  Input,
+  Layout,
+  Modal,
+  Space,
+  Typography,
+  type MenuProps,
+} from 'antd';
+import { UserOutlined, LogoutOutlined, KeyOutlined, SearchOutlined } from '@ant-design/icons';
 import { Apis, type ReqUpdatePassword } from '@/apis/apis';
-import type { User } from '@/utils/type';
+import type { Host, User } from '@/utils/type';
 import useApp from 'antd/es/app/useApp';
 import styled from 'styled-components';
 import { UserProvider } from '@/contexts/UserContext';
 import { preload, preloads } from '@/routes';
+import { renderProtocolTags } from '@/pages/host/HostPage';
 
 const { Header, Content } = Layout;
 
@@ -46,6 +59,10 @@ export const RootLayout = () => {
   const [user, setUser] = useState<User | null>(null);
   const [psdOpen, setPsdOpen] = useState(false);
   const [psdForm] = Form.useForm<UpdatePasswordForm>();
+  const [hostSearch, setHostSearch] = useState('');
+  const [hostSearchFocused, setHostSearchFocused] = useState(false);
+  const [hostSearchLoading, setHostSearchLoading] = useState(false);
+  const [hostSearchList, setHostSearchList] = useState<Host[]>([]);
 
   const activeKey = loc.pathname.startsWith('/console') ? 'console' : 'host';
 
@@ -67,6 +84,31 @@ export const RootLayout = () => {
 
   const handleUpdatePassword = () => {
     setPsdOpen(true);
+  };
+
+  const handleHostSearch = (value: string) => {
+    const keyword = value.trim();
+    setHostSearch(keyword);
+    if (!keyword) {
+      setHostSearchList([]);
+      return;
+    }
+    setHostSearchLoading(true);
+    Apis.QueryMyHost({ Page: 1, PageSize: 10, Search: keyword })
+      .then((res) => {
+        if (res.Code === 0) {
+          setHostSearchList(res.Data.List ?? []);
+        } else {
+          setHostSearchList([]);
+        }
+      })
+      .finally(() => setHostSearchLoading(false));
+  };
+
+  const openHost = (hostUid: string) => {
+    setHostSearch('');
+    setHostSearchList([]);
+    window.open('/host/' + hostUid, '_blank');
   };
 
   const handlePsdOk = () => {
@@ -100,6 +142,23 @@ export const RootLayout = () => {
     },
   ];
 
+  const hostSearchOptions = hostSearchList.map((host) => ({
+    value: host.Uid,
+    label: (
+      <Flex align="center" justify="space-between" gap={12}>
+        <div style={{ minWidth: 0 }}>
+          <Typography.Text strong ellipsis style={{ display: 'block' }}>
+            {host.Name || '未命名'}
+          </Typography.Text>
+          <Typography.Text type="secondary" ellipsis style={{ display: 'block' }}>
+            {host.Ip}
+          </Typography.Text>
+        </div>
+        {renderProtocolTags(host)}
+      </Flex>
+    ),
+  }));
+
   return (
     <Layout style={{ height: '100%' }}>
       <Header
@@ -111,6 +170,7 @@ export const RootLayout = () => {
           boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)',
           padding: '0 24px',
           height: 56,
+          lineHeight: 'normal',
           position: 'relative',
           zIndex: 10,
         }}
@@ -161,6 +221,19 @@ export const RootLayout = () => {
             ))}
         </Space>
 
+        <AutoComplete
+          value={hostSearch}
+          options={hostSearchOptions}
+          showSearch={{ onSearch: handleHostSearch }}
+          onSelect={(value) => openHost(value)}
+          onFocus={() => setHostSearchFocused(true)}
+          onBlur={() => setHostSearchFocused(false)}
+          notFoundContent={hostSearchLoading ? '搜索中...' : hostSearch ? '未找到匹配主机' : null}
+          popupMatchSelectWidth={420}
+          style={{ width: hostSearchFocused || hostSearch ? 420 : 300, height: 32, transition: 'width 0.18s ease' }}
+        >
+          <Input prefix={<SearchOutlined />} allowClear placeholder="搜索主机名、地址、IP" variant="filled" />
+        </AutoComplete>
         <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
           <Button type="text" icon={<UserOutlined />}>
             {user?.Nickname || user?.Username || '用户'}

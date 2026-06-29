@@ -235,6 +235,7 @@ export const Apis = {
 
   // Host
   QueryHost: (data: ReqQueryHost): Promise<Response<PageObject<Host>>> => request.post('/api/QueryHost', data),
+  QueryMyHost: (data: ReqQueryHost): Promise<Response<PageObject<Host>>> => request.post('/api/QueryMyHost', data),
   CreateHost: (data: ReqCreateHost): Promise<Response<string>> => request.post('/api/CreateHost', data),
   UpdateHost: (data: ReqUpdateHost): Promise<Response<string>> => request.post('/api/UpdateHost', data),
   DeleteHost: (data: ReqDeleteHost): Promise<Response<string>> => request.post('/api/DeleteHost', data),
