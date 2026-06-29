@@ -65,9 +65,14 @@ export function SessionAuditPage() {
     { title: '结束时间', dataIndex: 'EndTime', width: 170, render: formatTime },
     { title: '用户 UID', dataIndex: 'UserUid', width: 180, ellipsis: true },
     { title: '主机 UID', dataIndex: 'HostUid', width: 180, ellipsis: true },
-    { title: '系统用户 UID', dataIndex: 'OsUserUid', width: 180, ellipsis: true },
+    { title: '主机账号 UID', dataIndex: 'OsUserUid', width: 180, ellipsis: true },
     { title: '协议', dataIndex: 'Proctol', width: 90, render: (v: string) => <Tag>{v?.toUpperCase()}</Tag> },
-    { title: '状态', dataIndex: 'Online', width: 90, render: (v: boolean) => <Tag color={v ? 'green' : 'default'}>{v ? '在线' : '离线'}</Tag> },
+    {
+      title: '状态',
+      dataIndex: 'Online',
+      width: 90,
+      render: (v: boolean) => <Tag color={v ? 'green' : 'default'}>{v ? '在线' : '离线'}</Tag>,
+    },
   ];
 
   return (
@@ -303,7 +308,12 @@ export function LoginAuditPage() {
   const columns: TableColumnsType<LoginRecord> = [
     { title: '时间', dataIndex: 'LoginTime', width: 170, render: formatTime },
     { title: '用户', dataIndex: 'Username', width: 140 },
-    { title: '结果', dataIndex: 'Success', width: 90, render: (v: boolean) => <Tag color={v ? 'green' : 'red'}>{v ? '成功' : '失败'}</Tag> },
+    {
+      title: '结果',
+      dataIndex: 'Success',
+      width: 90,
+      render: (v: boolean) => <Tag color={v ? 'green' : 'red'}>{v ? '成功' : '失败'}</Tag>,
+    },
     { title: '消息', dataIndex: 'Message', width: 160 },
     { title: 'IP', dataIndex: 'Ip', width: 140 },
     { title: 'User-Agent', dataIndex: 'UserAgent', ellipsis: true },

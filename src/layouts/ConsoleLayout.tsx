@@ -1,11 +1,18 @@
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { AuditOutlined, CloudServerOutlined, SafetyOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  AuditOutlined,
+  CloudServerOutlined,
+  SafetyOutlined,
+  TeamOutlined,
+  UserSwitchOutlined,
+} from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
 const { Sider, Content } = Layout;
 
 const menuItems = [
   { key: 'host', icon: <CloudServerOutlined />, label: '主机管理' },
+  { key: 'os-user', icon: <UserSwitchOutlined />, label: '主机账号' },
   { key: 'user', icon: <TeamOutlined />, label: '用户管理' },
   { key: 'access-group', icon: <SafetyOutlined />, label: '访问规则' },
   {
@@ -25,15 +32,17 @@ export function ConsoleLayout() {
   const loc = useLocation();
   const activeKey = loc.pathname.includes('/console/access-group')
     ? 'access-group'
-    : loc.pathname.includes('/console/host')
-      ? 'host'
-      : loc.pathname.includes('/console/audit/operation')
-        ? 'audit/operation'
-        : loc.pathname.includes('/console/audit/login')
-          ? 'audit/login'
-          : loc.pathname.includes('/console/audit')
-            ? 'audit/session'
-            : 'user';
+    : loc.pathname.includes('/console/os-user')
+      ? 'os-user'
+      : loc.pathname.includes('/console/host')
+        ? 'host'
+        : loc.pathname.includes('/console/audit/operation')
+          ? 'audit/operation'
+          : loc.pathname.includes('/console/audit/login')
+            ? 'audit/login'
+            : loc.pathname.includes('/console/audit')
+              ? 'audit/session'
+              : 'user';
 
   return (
     <Layout style={{ height: '100%', background: '#f5f6f8' }}>

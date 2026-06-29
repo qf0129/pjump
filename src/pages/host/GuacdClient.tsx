@@ -221,7 +221,7 @@ function formatGuacamoleError(err: any, protocol: 'rdp' | 'vnc') {
     return `${protocolName} 上游服务返回错误，请检查账号密码或服务配置。`;
   }
   if (code === 0x0301 || code === 0x0303) {
-    return `${protocolName} 认证失败或权限不足，请检查系统用户密码。`;
+    return `${protocolName} 认证失败或权限不足，请检查主机账号密码。`;
   }
   return message || `${protocolName} 连接失败，错误码：${code ?? 'unknown'}`;
 }

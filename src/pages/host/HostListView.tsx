@@ -181,7 +181,7 @@ export default function HostListView({ mode }: HostListViewProps) {
           <div />
         )}
         <Input.Search
-          placeholder="搜索名称、IP…"
+          placeholder="搜索名称、地址…"
           allowClear
           value={search}
           onSearch={handleSearch}
@@ -282,7 +282,7 @@ export default function HostListView({ mode }: HostListViewProps) {
             </Typography.Text>
             <div style={{ marginTop: 12 }}>
               <Checkbox checked={deleteOsUser} onChange={(e) => setDeleteOsUser(e.target.checked)}>
-                同时删除关联的系统用户
+                同时删除关联的主机账号
               </Checkbox>
             </div>
           </Modal>

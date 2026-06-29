@@ -7,6 +7,7 @@ import HostPage from './pages/host/HostPage';
 
 const hostManagePageImport = () => import('./pages/host/HostManagePage');
 const userPageImport = () => import('./pages/user/UserPage');
+const osUserPageImport = () => import('./pages/os-user/OsUserPage');
 const signInImport = () => import('./pages/public/SignIn');
 const clientPageImport = () => import('./pages/host/ClientPage');
 const workPageImport = () => import('./pages/work/WorkPage');
@@ -17,6 +18,7 @@ const accessGroupPageImport = () => import('./pages/access-group/AccessGroupPage
 
 const HostManagePage = lazy(hostManagePageImport);
 const UserPage = lazy(userPageImport);
+const OsUserPage = lazy(osUserPageImport);
 const SignIn = lazy(signInImport);
 const ClientPage = lazy(clientPageImport);
 const WorkPage = lazy(workPageImport);
@@ -34,6 +36,7 @@ export function preload(importFn: () => Promise<any>) {
 export const preloads = {
   hostManagePage: hostManagePageImport,
   userPage: userPageImport,
+  osUserPage: osUserPageImport,
   clientPage: clientPageImport,
   workPage: workPageImport,
   sessionAuditPage: sessionAuditPageImport,
@@ -87,6 +90,14 @@ export const routes: RouteObject[] = [
             ),
           },
           {
+            path: 'os-user',
+            element: (
+              <Lazy>
+                <OsUserPage />
+              </Lazy>
+            ),
+          },
+          {
             path: 'access-group',
             element: (
               <Lazy>
@@ -129,6 +140,10 @@ export const routes: RouteObject[] = [
       {
         path: 'user',
         element: <Navigate to="/console/user" replace />,
+      },
+      {
+        path: 'os-user',
+        element: <Navigate to="/console/os-user" replace />,
       },
       {
         path: 'access-group',

@@ -50,6 +50,10 @@ export type OsUser = BaseModel & {
   VncPassword: string;
   PrivateKey: string;
   PrivateKeyPsd: string;
+  HasPassword: boolean;
+  HasVncPassword: boolean;
+  HasPrivateKey: boolean;
+  HasPrivateKeyPsd: boolean;
 };
 
 export type HostOsUser = BaseModel & {

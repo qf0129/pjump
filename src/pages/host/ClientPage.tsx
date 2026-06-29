@@ -135,7 +135,7 @@ export default function ClientPage() {
               <Typography.Text type="secondary">未配置协议</Typography.Text>
             )}
           </Form.Item>
-          <Form.Item label="系统用户">
+          <Form.Item label="主机账号">
             {osUsers.length ? (
               <Radio.Group value={selOsUserUid} onChange={(e) => setSelOsUserUid(e.target.value)} buttonStyle="solid">
                 {osUsers.map((u) => (
@@ -143,7 +143,7 @@ export default function ClientPage() {
                 ))}
               </Radio.Group>
             ) : (
-              <Typography.Text type="secondary">未配置系统用户</Typography.Text>
+              <Typography.Text type="secondary">未配置主机账号</Typography.Text>
             )}
           </Form.Item>
         </Form>

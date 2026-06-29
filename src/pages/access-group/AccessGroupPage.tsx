@@ -170,7 +170,7 @@ export default function AccessGroupPage() {
     { title: '名称', dataIndex: 'Name', width: 180 },
     { title: '描述', dataIndex: 'Description', ellipsis: true },
     {
-      title: '允许登录用户',
+      title: '允许登录用户名',
       dataIndex: 'AllowedOsUsernames',
       width: 220,
       render: (names: string[] = []) =>
@@ -252,7 +252,7 @@ export default function AccessGroupPage() {
           <Form.Item name="Description" label="描述">
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="AllowedOsUsernames" label="允许登录用户">
+          <Form.Item name="AllowedOsUsernames" label="允许登录用户名">
             <Input placeholder="root,dev，不填表示不限制" />
           </Form.Item>
           <Form.Item name="ExpiredAt" label="过期时间">
@@ -294,30 +294,6 @@ function AccessGroupRelationPanel({ group }: { group: AccessGroup }) {
 
   const configs = useMemo<Record<RelationKey, RelationConfig<any>>>(
     () => ({
-      owner: {
-        label: '负责人',
-        rowKey: 'Uid',
-        selectPlaceholder: '选择负责人',
-        getOptionLabel: (item: User) => `${item.Username}${item.Nickname ? ` (${item.Nickname})` : ''}`,
-        queryRelated: (groupUid) =>
-          Apis.QueryAccessGroupOwner({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
-        queryOptions: () => Apis.QueryUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
-        add: (groupUid, uid) => Apis.CreateAccessGroupOwner({ GroupUid: groupUid, UserUid: uid }).then(isOk),
-        remove: (groupUid, uid) => Apis.DeleteAccessGroupOwner({ GroupUid: groupUid, UserUid: uid }).then(isOk),
-        columns: userColumns,
-      },
-      user: {
-        label: '成员用户',
-        rowKey: 'Uid',
-        selectPlaceholder: '选择成员用户',
-        getOptionLabel: (item: User) => `${item.Username}${item.Nickname ? ` (${item.Nickname})` : ''}`,
-        queryRelated: (groupUid) =>
-          Apis.QueryAccessGroupUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
-        queryOptions: () => Apis.QueryUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
-        add: (groupUid, uid) => Apis.CreateAccessGroupUser({ GroupUid: groupUid, UserUid: uid }).then(isOk),
-        remove: (groupUid, uid) => Apis.DeleteAccessGroupUser({ GroupUid: groupUid, UserUid: uid }).then(isOk),
-        columns: userColumns,
-      },
       host: {
         label: '主机',
         rowKey: 'Uid',
@@ -331,9 +307,9 @@ function AccessGroupRelationPanel({ group }: { group: AccessGroup }) {
         columns: hostColumns,
       },
       osUser: {
-        label: '系统用户',
+        label: '主机账号',
         rowKey: 'Uid',
-        selectPlaceholder: '选择系统用户',
+        selectPlaceholder: '选择主机账号',
         getOptionLabel: (item: OsUser) => `${item.Name || item.Username} (${item.Username})`,
         queryRelated: (groupUid) =>
           Apis.QueryAccessGroupOsUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
@@ -341,6 +317,30 @@ function AccessGroupRelationPanel({ group }: { group: AccessGroup }) {
         add: (groupUid, uid) => Apis.CreateAccessGroupOsUser({ GroupUid: groupUid, OsUserUid: uid }).then(isOk),
         remove: (groupUid, uid) => Apis.DeleteAccessGroupOsUser({ GroupUid: groupUid, OsUserUid: uid }).then(isOk),
         columns: osUserColumns,
+      },
+      user: {
+        label: '成员用户',
+        rowKey: 'Uid',
+        selectPlaceholder: '选择成员用户',
+        getOptionLabel: (item: User) => `${item.Username}${item.Nickname ? ` (${item.Nickname})` : ''}`,
+        queryRelated: (groupUid) =>
+          Apis.QueryAccessGroupUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
+        queryOptions: () => Apis.QueryUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
+        add: (groupUid, uid) => Apis.CreateAccessGroupUser({ GroupUid: groupUid, UserUid: uid }).then(isOk),
+        remove: (groupUid, uid) => Apis.DeleteAccessGroupUser({ GroupUid: groupUid, UserUid: uid }).then(isOk),
+        columns: userColumns,
+      },
+      owner: {
+        label: '负责人',
+        rowKey: 'Uid',
+        selectPlaceholder: '选择负责人',
+        getOptionLabel: (item: User) => `${item.Username}${item.Nickname ? ` (${item.Nickname})` : ''}`,
+        queryRelated: (groupUid) =>
+          Apis.QueryAccessGroupOwner({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
+        queryOptions: () => Apis.QueryUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
+        add: (groupUid, uid) => Apis.CreateAccessGroupOwner({ GroupUid: groupUid, UserUid: uid }).then(isOk),
+        remove: (groupUid, uid) => Apis.DeleteAccessGroupOwner({ GroupUid: groupUid, UserUid: uid }).then(isOk),
+        columns: userColumns,
       },
     }),
     []

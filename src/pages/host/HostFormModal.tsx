@@ -1,4 +1,4 @@
-import { Apis, type ReqCreateHost, type ReqUpdateHost, type ReqUpdateOsUser } from '@/apis/apis';
+import { Apis, type ReqCreateHost, type ReqUpdateHost } from '@/apis/apis';
 import type { Host, OsUser } from '@/utils/type';
 import {
   Button,
@@ -17,6 +17,8 @@ import {
 } from 'antd';
 import { useRef, useState } from 'react';
 import useApp from 'antd/es/app/useApp';
+import OsUserFormModal, { type OsUserFormValues } from '../os-user/OsUserFormModal';
+import CredentialStatus from '../os-user/CredentialStatus';
 
 interface Props {
   open: boolean;
@@ -25,7 +27,15 @@ interface Props {
   onSuccess: () => void;
 }
 
-type OsUserEntry = { uid: string; name: string; username: string };
+type OsUserEntry = {
+  uid: string;
+  name: string;
+  username: string;
+  hasPassword: boolean;
+  hasVncPassword: boolean;
+  hasPrivateKey: boolean;
+  hasPrivateKeyPsd: boolean;
+};
 
 export default function HostFormModal({ open, editingHost, onClose, onSuccess }: Props) {
   const app = useApp();
@@ -33,9 +43,7 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   const [allOsUsers, setAllOsUsers] = useState<OsUser[]>([]);
   const [osUserEntries, setOsUserEntries] = useState<OsUserEntry[]>([]);
   const [osUserModalOpen, setOsUserModalOpen] = useState(false);
-  const [osUserModalMode, setOsUserModalMode] = useState<'new' | 'edit'>('new');
-  const [editingOsUserUid, setEditingOsUserUid] = useState<string | null>(null);
-  const [osUserForm] = Form.useForm();
+  const [editingOsUser, setEditingOsUser] = useState<OsUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectKey, setSelectKey] = useState(0);
   const origUidsRef = useRef<Set<string>>(new Set());
@@ -113,6 +121,10 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
                 uid: u.Uid,
                 name: u.Name || u.Username,
                 username: u.Username,
+                hasPassword: u.HasPassword,
+                hasVncPassword: u.HasVncPassword,
+                hasPrivateKey: u.HasPrivateKey,
+                hasPrivateKeyPsd: u.HasPrivateKeyPsd,
               }))
             );
             origUidsRef.current = new Set(users.map((u) => u.Uid));
@@ -133,7 +145,18 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   const addOsUser = (uid: string) => {
     const src = allOsUsers.find((u) => u.Uid === uid);
     if (!src || osUserEntries.some((e) => e.uid === uid)) return;
-    setOsUserEntries((prev) => [...prev, { uid, name: src.Name || src.Username, username: src.Username }]);
+    setOsUserEntries((prev) => [
+      ...prev,
+      {
+        uid,
+        name: src.Name || src.Username,
+        username: src.Username,
+        hasPassword: src.HasPassword,
+        hasVncPassword: src.HasVncPassword,
+        hasPrivateKey: src.HasPrivateKey,
+        hasPrivateKeyPsd: src.HasPrivateKeyPsd,
+      },
+    ]);
     setSelectKey((k) => k + 1);
   };
 
@@ -142,84 +165,53 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   };
 
   const openNewOsUserModal = () => {
-    setOsUserModalMode('new');
-    setEditingOsUserUid(null);
-    osUserForm.resetFields();
+    setEditingOsUser(null);
     setOsUserModalOpen(true);
   };
 
   const openEditOsUserModal = (uid: string) => {
     const src = allOsUsers.find((u) => u.Uid === uid);
     if (!src) return;
-    setOsUserModalMode('edit');
-    setEditingOsUserUid(uid);
-    osUserForm.setFieldsValue({
-      name: src.Name || '',
-      username: src.Username || '',
-      password: '',
-      vncPassword: '',
-      privateKey: '',
-      privateKeyPsd: '',
-    });
+    setEditingOsUser(src);
     setOsUserModalOpen(true);
   };
 
-  const handleOsUserModalOk = () => {
-    osUserForm.validateFields().then(async (vals) => {
-      if (osUserModalMode === 'edit' && editingOsUserUid) {
-        const data: ReqUpdateOsUser = { Uid: editingOsUserUid };
-        const src = allOsUsers.find((u) => u.Uid === editingOsUserUid);
-        if (src) {
-          if (vals.name !== (src.Name || '')) data.Name = vals.name || '';
-          if (vals.username !== src.Username) data.Username = vals.username;
-        } else {
-          if (vals.name) data.Name = vals.name;
-          if (vals.username) data.Username = vals.username;
-        }
-        if (vals.password) data.Password = vals.password;
-        if (vals.vncPassword) data.VncPassword = vals.vncPassword;
-        if (vals.privateKey) data.PrivateKey = vals.privateKey;
-        if (vals.privateKeyPsd) data.PrivateKeyPsd = vals.privateKeyPsd;
-        const res = await Apis.UpdateOsUser(data);
-        if (res.Code === 0) {
-          setOsUserEntries((prev) =>
-            prev.map((e) =>
-              e.uid === editingOsUserUid
-                ? {
-                    uid: editingOsUserUid,
-                    name: vals.name || vals.username,
-                    username: vals.username,
-                  }
-                : e
-            )
-          );
-          setOsUserModalOpen(false);
-          refreshAllOsUsers();
-        } else {
-          app.message.warning(res.Msg);
-        }
-      } else {
-        const res = await Apis.CreateOsUser({
-          Name: vals.name || vals.username,
-          Username: vals.username,
-          Password: vals.password || '',
-          VncPassword: vals.vncPassword || '',
-          PrivateKey: vals.privateKey || '',
-          PrivateKeyPsd: vals.privateKeyPsd || '',
-        });
-        if (res.Code === 0) {
-          setOsUserEntries((prev) => [
-            ...prev,
-            { uid: res.Data, name: vals.name || vals.username, username: vals.username },
-          ]);
-          setOsUserModalOpen(false);
-          setSelectKey((k) => k + 1);
-          refreshAllOsUsers();
-        } else {
-          app.message.warning(res.Msg);
-        }
-      }
-    });
+  const handleOsUserSaved = (uid: string, vals: OsUserFormValues) => {
+    if (editingOsUser) {
+      setOsUserEntries((prev) =>
+        prev.map((e) =>
+          e.uid === uid
+            ? {
+                uid,
+                name: vals.name || vals.username,
+                username: vals.username,
+                hasPassword: vals.clearPassword ? false : e.hasPassword || !!vals.password,
+                hasVncPassword: vals.clearVncPassword
+                  ? false
+                  : e.hasVncPassword || !!vals.vncPassword || !!vals.password,
+                hasPrivateKey: vals.clearPrivateKey ? false : e.hasPrivateKey || !!vals.privateKey,
+                hasPrivateKeyPsd: vals.clearPrivateKeyPsd ? false : e.hasPrivateKeyPsd || !!vals.privateKeyPsd,
+              }
+            : e
+        )
+      );
+    } else {
+      setOsUserEntries((prev) => [
+        ...prev,
+        {
+          uid,
+          name: vals.name || vals.username,
+          username: vals.username,
+          hasPassword: !!vals.password,
+          hasVncPassword: !!vals.vncPassword || !!vals.password,
+          hasPrivateKey: !!vals.privateKey,
+          hasPrivateKeyPsd: !!vals.privateKeyPsd,
+        },
+      ]);
+      setSelectKey((k) => k + 1);
+    }
+    setOsUserModalOpen(false);
+    refreshAllOsUsers();
   };
 
   // ---- submit ----
@@ -368,7 +360,7 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
           </Row>
 
           <Typography.Text strong style={{ display: 'block', marginBottom: 8 }}>
-            系统用户
+            主机账号
           </Typography.Text>
           {osUserEntries.map((entry) => (
             <Flex
@@ -385,6 +377,15 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
               <Typography.Text>
                 {entry.name} <Typography.Text type="secondary">({entry.username})</Typography.Text>
               </Typography.Text>
+              <CredentialStatus
+                mode="configured"
+                osUser={{
+                  HasPassword: entry.hasPassword,
+                  HasVncPassword: entry.hasVncPassword,
+                  HasPrivateKey: entry.hasPrivateKey,
+                  HasPrivateKeyPsd: entry.hasPrivateKeyPsd,
+                }}
+              />
               <Space>
                 <Button type="link" size="small" onClick={() => openEditOsUserModal(entry.uid)}>
                   编辑
@@ -401,7 +402,7 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
               filterOption: (input, option) =>
                 ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase()),
             }}
-            placeholder="选择系统用户"
+            placeholder="选择主机账号"
             style={{ width: '50%', marginTop: 8 }}
             onChange={(val) => {
               if (val === '__new__') {
@@ -417,41 +418,18 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
                   value: u.Uid,
                   label: `${u.Name || u.Username} (${u.Username})`,
                 })),
-              { value: '__new__', label: '＋ 新建系统用户' },
+              { value: '__new__', label: '＋ 新建主机账号' },
             ]}
           />
         </Form>
       </Modal>
 
-      <Modal
-        title={osUserModalMode === 'edit' ? '编辑系统用户' : '新建系统用户'}
+      <OsUserFormModal
         open={osUserModalOpen}
-        onOk={handleOsUserModalOk}
+        editingOsUser={editingOsUser}
         onCancel={() => setOsUserModalOpen(false)}
-        destroyOnHidden
-        width={480}
-      >
-        <Form form={osUserForm} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="name" label="名称">
-            <Input placeholder="如：root账号" />
-          </Form.Item>
-          <Form.Item name="username" label="登录用户" rules={[{ required: true, message: '请输入登录用户名' }]}>
-            <Input placeholder="如：root" />
-          </Form.Item>
-          <Form.Item name="password" label="密码">
-            <Input.Password placeholder={osUserModalMode === 'edit' ? '留空则不修改' : '登录密码'} />
-          </Form.Item>
-          <Form.Item name="vncPassword" label="VNC 密码">
-            <Input.Password placeholder={osUserModalMode === 'edit' ? '留空则不修改' : '留空则使用登录密码'} />
-          </Form.Item>
-          <Form.Item name="privateKey" label="私钥">
-            <Input.TextArea rows={3} placeholder={osUserModalMode === 'edit' ? '留空则不修改' : 'SSH 私钥内容'} />
-          </Form.Item>
-          <Form.Item name="privateKeyPsd" label="私钥密码">
-            <Input.Password placeholder={osUserModalMode === 'edit' ? '留空则不修改' : '私钥密码（如有）'} />
-          </Form.Item>
-        </Form>
-      </Modal>
+        onSuccess={handleOsUserSaved}
+      />
     </>
   );
 }

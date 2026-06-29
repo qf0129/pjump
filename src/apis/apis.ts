@@ -62,11 +62,16 @@ export type ReqUpdateOsUser = {
   VncPassword?: string;
   PrivateKey?: string;
   PrivateKeyPsd?: string;
+  ClearPassword?: boolean;
+  ClearVncPassword?: boolean;
+  ClearPrivateKey?: boolean;
+  ClearPrivateKeyPsd?: boolean;
 };
 
 export type ReqQueryOsUser = {
   Page?: number;
   PageSize?: number;
+  Search?: string;
   Name?: string;
   Username?: string;
 };
