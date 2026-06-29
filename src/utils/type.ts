@@ -30,6 +30,7 @@ export type AccessGroup = BaseModel & {
   Description: string;
   ExpiredAt?: string;
   AllowedOsUsernames: string[];
+  HostCount?: number;
 };
 
 export type Host = BaseModel & {

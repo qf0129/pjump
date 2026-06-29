@@ -256,6 +256,7 @@ export const Apis = {
 
   // AccessGroup
   QueryAccessGroup: (data: ReqQueryAccessGroup): Promise<Response<PageObject<AccessGroup>>> => request.post('/api/QueryAccessGroup', data),
+  QueryMyAccessGroup: (data: ReqQueryAccessGroup): Promise<Response<PageObject<AccessGroup>>> => request.post('/api/QueryMyAccessGroup', data),
   CreateAccessGroup: (data: ReqCreateAccessGroup): Promise<Response<string>> => request.post('/api/CreateAccessGroup', data),
   UpdateAccessGroup: (data: ReqUpdateAccessGroup): Promise<Response<string>> => request.post('/api/UpdateAccessGroup', data),
   DeleteAccessGroup: (data: ReqDeleteAccessGroup): Promise<Response<string>> => request.post('/api/DeleteAccessGroup', data),

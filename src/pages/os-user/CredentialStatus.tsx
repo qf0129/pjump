@@ -48,7 +48,11 @@ export default function CredentialStatus({ osUser, mode = 'all' }: Props) {
         const configured = osUser[item.key];
         return (
           <Tooltip key={item.key} title={`${item.tip}${configured ? '已配置' : '未配置'}`}>
-            <Tag color={configured ? 'success' : 'default'} style={{ marginInlineEnd: 0 }}>
+            <Tag
+              color={configured ? 'geekblue' : 'default'}
+              variant={configured ? 'outlined' : 'filled'}
+              style={{ marginInlineEnd: 0 }}
+            >
               {item.label}
             </Tag>
           </Tooltip>
