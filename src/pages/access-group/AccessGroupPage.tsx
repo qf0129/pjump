@@ -174,7 +174,11 @@ export default function AccessGroupPage() {
       dataIndex: 'AllowedOsUsernames',
       width: 220,
       render: (names: string[] = []) =>
-        names.length ? names.map((name) => <Tag key={name}>{name}</Tag>) : <span style={{ color: '#999' }}>不限制</span>,
+        names.length ? (
+          names.map((name) => <Tag key={name}>{name}</Tag>)
+        ) : (
+          <span style={{ color: '#999' }}>不限制</span>
+        ),
     },
     { title: '过期时间', dataIndex: 'ExpiredAt', width: 180, render: (value?: string) => value || '-' },
     {
@@ -295,7 +299,8 @@ function AccessGroupRelationPanel({ group }: { group: AccessGroup }) {
         rowKey: 'Uid',
         selectPlaceholder: '选择负责人',
         getOptionLabel: (item: User) => `${item.Username}${item.Nickname ? ` (${item.Nickname})` : ''}`,
-        queryRelated: (groupUid) => Apis.QueryAccessGroupOwner({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
+        queryRelated: (groupUid) =>
+          Apis.QueryAccessGroupOwner({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
         queryOptions: () => Apis.QueryUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
         add: (groupUid, uid) => Apis.CreateAccessGroupOwner({ GroupUid: groupUid, UserUid: uid }).then(isOk),
         remove: (groupUid, uid) => Apis.DeleteAccessGroupOwner({ GroupUid: groupUid, UserUid: uid }).then(isOk),
@@ -306,18 +311,20 @@ function AccessGroupRelationPanel({ group }: { group: AccessGroup }) {
         rowKey: 'Uid',
         selectPlaceholder: '选择成员用户',
         getOptionLabel: (item: User) => `${item.Username}${item.Nickname ? ` (${item.Nickname})` : ''}`,
-        queryRelated: (groupUid) => Apis.QueryAccessGroupUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
+        queryRelated: (groupUid) =>
+          Apis.QueryAccessGroupUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
         queryOptions: () => Apis.QueryUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
         add: (groupUid, uid) => Apis.CreateAccessGroupUser({ GroupUid: groupUid, UserUid: uid }).then(isOk),
         remove: (groupUid, uid) => Apis.DeleteAccessGroupUser({ GroupUid: groupUid, UserUid: uid }).then(isOk),
         columns: userColumns,
       },
       host: {
-        label: '服务器',
+        label: '主机',
         rowKey: 'Uid',
-        selectPlaceholder: '选择服务器',
+        selectPlaceholder: '选择主机',
         getOptionLabel: (item: Host) => `${item.Name || item.Ip} (${item.Ip})`,
-        queryRelated: (groupUid) => Apis.QueryAccessGroupHost({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
+        queryRelated: (groupUid) =>
+          Apis.QueryAccessGroupHost({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
         queryOptions: () => Apis.QueryHost({ PageSize: RELATION_PAGE_SIZE }).then(toList),
         add: (groupUid, uid) => Apis.CreateAccessGroupHost({ GroupUid: groupUid, HostUid: uid }).then(isOk),
         remove: (groupUid, uid) => Apis.DeleteAccessGroupHost({ GroupUid: groupUid, HostUid: uid }).then(isOk),
@@ -328,7 +335,8 @@ function AccessGroupRelationPanel({ group }: { group: AccessGroup }) {
         rowKey: 'Uid',
         selectPlaceholder: '选择系统用户',
         getOptionLabel: (item: OsUser) => `${item.Name || item.Username} (${item.Username})`,
-        queryRelated: (groupUid) => Apis.QueryAccessGroupOsUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
+        queryRelated: (groupUid) =>
+          Apis.QueryAccessGroupOsUser({ GroupUid: groupUid, PageSize: RELATION_PAGE_SIZE }).then(toList),
         queryOptions: () => Apis.QueryOsUser({ PageSize: RELATION_PAGE_SIZE }).then(toList),
         add: (groupUid, uid) => Apis.CreateAccessGroupOsUser({ GroupUid: groupUid, OsUserUid: uid }).then(isOk),
         remove: (groupUid, uid) => Apis.DeleteAccessGroupOsUser({ GroupUid: groupUid, OsUserUid: uid }).then(isOk),
@@ -434,7 +442,9 @@ function RelationTable<T extends { Uid: string }>({
           placeholder={config.selectPlaceholder}
           options={selectOptions}
           onChange={setSelectedUid}
-          filterOption={(input, option) => ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())}
+          filterOption={(input, option) =>
+            ((option?.label as string) || '').toLowerCase().includes(input.toLowerCase())
+          }
           style={{ flex: 1 }}
         />
         <Button type="primary" icon={<PlusOutlined />} disabled={!selectedUid} onClick={addRelation}>

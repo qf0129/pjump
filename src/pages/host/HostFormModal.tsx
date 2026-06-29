@@ -296,7 +296,7 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
   return (
     <>
       <Modal
-        title={editingHost ? '编辑服务器' : '添加服务器'}
+        title={editingHost ? '编辑主机' : '添加主机'}
         open={open}
         onOk={handleOk}
         onCancel={handleClose}
@@ -309,12 +309,12 @@ export default function HostFormModal({ open, editingHost, onClose, onSuccess }:
         // loading={loading}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="Name" label="名称" rules={[{ required: true, message: '请输入服务器名称' }]}>
+          <Form.Item name="Name" label="名称" rules={[{ required: true, message: '请输入主机名称' }]}>
             <Input placeholder="如：生产服务器" />
           </Form.Item>
           <Row gutter={12}>
             <Col span={12}>
-              <Form.Item name="Ip" label="服务器地址" rules={[{ required: true, message: '请输入 IP 地址' }]}>
+              <Form.Item name="Ip" label="主机地址" rules={[{ required: true, message: '请输入 IP 地址' }]}>
                 <Input placeholder="如：192.168.1.100 或 example.com" />
               </Form.Item>
             </Col>

@@ -31,10 +31,8 @@ const NavBtn = styled.div`
 `;
 
 const navItems = [
-  { key: 'host', label: '服务器', needAdmin: false },
-  { key: 'user', label: '用户管理', needAdmin: true },
-  { key: 'access-group', label: '访问规则', needAdmin: true },
-  { key: 'audit', label: '审计管理', needAdmin: true },
+  { key: 'host', label: '我的主机', needAdmin: false },
+  { key: 'console', label: '控制台', needAdmin: true },
 ];
 
 type UpdatePasswordForm = ReqUpdatePassword & {
@@ -49,13 +47,7 @@ export const RootLayout = () => {
   const [psdOpen, setPsdOpen] = useState(false);
   const [psdForm] = Form.useForm<UpdatePasswordForm>();
 
-  const activeKey = loc.pathname.startsWith('/user')
-    ? 'user'
-    : loc.pathname.startsWith('/access-group')
-      ? 'access-group'
-      : loc.pathname.startsWith('/audit')
-        ? 'audit'
-        : 'host';
+  const activeKey = loc.pathname.startsWith('/console') ? 'console' : 'host';
 
   useEffect(() => {
     Apis.GetUserInfo().then((res) => {
@@ -66,7 +58,7 @@ export const RootLayout = () => {
   }, []);
 
   const handleNavClick = (key: string) => {
-    nav(`/${key}`);
+    nav(key === 'console' ? '/console' : `/${key}`);
   };
 
   const handleLogout = () => {
@@ -154,9 +146,14 @@ export const RootLayout = () => {
                 className={activeKey === item.key ? 'active' : ''}
                 onClick={() => handleNavClick(item.key)}
                 onMouseEnter={() => {
-                  if (item.key === 'user') preload(preloads.userPage);
-                  if (item.key === 'access-group') preload(preloads.accessGroupPage);
-                  if (item.key === 'audit') preload(preloads.auditPage);
+                  if (item.key === 'console') {
+                    preload(preloads.hostManagePage);
+                    preload(preloads.userPage);
+                    preload(preloads.accessGroupPage);
+                    preload(preloads.sessionAuditPage);
+                    preload(preloads.operationAuditPage);
+                    preload(preloads.loginAuditPage);
+                  }
                 }}
               >
                 {item.label}
