@@ -223,6 +223,7 @@ export type ReqQuerySessionRecord = {
 export const Apis = {
   // Auth
   SignIn: (data: ReqSignIn): Promise<Response<{ Token: string }>> => request.post('/api/SignIn', data),
+  SignOut: (): Promise<Response<null>> => request.post('/api/SignOut'),
   GetHealth: (): Promise<Response<string>> => request.get('/api/health'),
 
   // User

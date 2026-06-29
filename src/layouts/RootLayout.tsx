@@ -79,7 +79,10 @@ export const RootLayout = () => {
   };
 
   const handleLogout = () => {
-    nav('/signin');
+    Apis.SignOut().finally(() => {
+      setUser(null);
+      nav('/signin');
+    });
   };
 
   const handleUpdatePassword = () => {
