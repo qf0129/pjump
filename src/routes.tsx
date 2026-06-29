@@ -9,12 +9,14 @@ const signInImport = () => import('./pages/public/SignIn');
 const clientPageImport = () => import('./pages/host/ClientPage');
 const workPageImport = () => import('./pages/work/WorkPage');
 const auditPageImport = () => import('./pages/audit/AuditPage');
+const accessGroupPageImport = () => import('./pages/access-group/AccessGroupPage');
 
 const UserPage = lazy(userPageImport);
 const SignIn = lazy(signInImport);
 const ClientPage = lazy(clientPageImport);
 const WorkPage = lazy(workPageImport);
 const AuditPage = lazy(auditPageImport);
+const AccessGroupPage = lazy(accessGroupPageImport);
 
 /** 预加载 chunk（hover 时调用，不阻塞当前页面） */
 export function preload(importFn: () => Promise<any>) {
@@ -27,6 +29,7 @@ export const preloads = {
   clientPage: clientPageImport,
   workPage: workPageImport,
   auditPage: auditPageImport,
+  accessGroupPage: accessGroupPageImport,
   signIn: signInImport,
 };
 
@@ -57,6 +60,14 @@ export const routes: RouteObject[] = [
         element: (
           <Lazy>
             <UserPage />
+          </Lazy>
+        ),
+      },
+      {
+        path: 'access-group',
+        element: (
+          <Lazy>
+            <AccessGroupPage />
           </Lazy>
         ),
       },

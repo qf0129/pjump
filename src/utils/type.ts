@@ -25,6 +25,13 @@ export type Group = BaseModel & {
   OsUsers: OsUser[];
 };
 
+export type AccessGroup = BaseModel & {
+  Name: string;
+  Description: string;
+  ExpiredAt?: string;
+  AllowedOsUsernames: string[];
+};
+
 export type Host = BaseModel & {
   Name: string;
   Ip: string;
@@ -38,6 +45,7 @@ export type Host = BaseModel & {
 export type OsUser = BaseModel & {
   Name: string;
   Username: string;
+  User?: string;
   Password: string;
   VncPassword: string;
   PrivateKey: string;

@@ -1,4 +1,4 @@
-import type { Group, Host, LoginRecord, OperationRecord, OsUser, SessionRecord, User } from '@/utils/type';
+import type { AccessGroup, Group, Host, LoginRecord, OperationRecord, OsUser, SessionRecord, User } from '@/utils/type';
 import request, { type PageObject, type Response } from './request';
 
 // ========== Auth ==========
@@ -138,6 +138,55 @@ export type ReqQueryGroupHost = {
   PageSize?: number;
 };
 
+// ========== AccessGroup ==========
+
+export type ReqQueryAccessGroup = {
+  Uid?: string;
+  Search?: string;
+  Page?: number;
+  PageSize?: number;
+};
+
+export type ReqCreateAccessGroup = {
+  Name: string;
+  Description?: string;
+  ExpiredAt?: string;
+  AllowedOsUsernames?: string[];
+};
+
+export type ReqUpdateAccessGroup = {
+  Uid: string;
+  Name?: string;
+  Description?: string;
+  ExpiredAt?: string;
+  AllowedOsUsernames?: string[];
+};
+
+export type ReqDeleteAccessGroup = {
+  Uid: string;
+};
+
+export type ReqQueryAccessGroupRelation = {
+  GroupUid: string;
+  Page?: number;
+  PageSize?: number;
+};
+
+export type ReqAccessGroupUserRelation = {
+  GroupUid: string;
+  UserUid: string;
+};
+
+export type ReqAccessGroupHostRelation = {
+  GroupUid: string;
+  HostUid: string;
+};
+
+export type ReqAccessGroupOsUserRelation = {
+  GroupUid: string;
+  OsUserUid: string;
+};
+
 // ========== Audit ==========
 
 export type ReqQueryOperationRecord = {
@@ -198,6 +247,24 @@ export const Apis = {
   // Group
   QueryUserGroup: (data: object): Promise<Response<Group[]>> => request.post('/api/QueryUserGroup', data),
   QueryGroupHost: (data: ReqQueryGroupHost): Promise<Response<PageObject<Host>>> => request.post('/api/QueryGroupHost', data),
+
+  // AccessGroup
+  QueryAccessGroup: (data: ReqQueryAccessGroup): Promise<Response<PageObject<AccessGroup>>> => request.post('/api/QueryAccessGroup', data),
+  CreateAccessGroup: (data: ReqCreateAccessGroup): Promise<Response<string>> => request.post('/api/CreateAccessGroup', data),
+  UpdateAccessGroup: (data: ReqUpdateAccessGroup): Promise<Response<string>> => request.post('/api/UpdateAccessGroup', data),
+  DeleteAccessGroup: (data: ReqDeleteAccessGroup): Promise<Response<string>> => request.post('/api/DeleteAccessGroup', data),
+  QueryAccessGroupOwner: (data: ReqQueryAccessGroupRelation): Promise<Response<PageObject<User>>> => request.post('/api/QueryAccessGroupOwner', data),
+  CreateAccessGroupOwner: (data: ReqAccessGroupUserRelation): Promise<Response<null>> => request.post('/api/CreateAccessGroupOwner', data),
+  DeleteAccessGroupOwner: (data: ReqAccessGroupUserRelation): Promise<Response<null>> => request.post('/api/DeleteAccessGroupOwner', data),
+  QueryAccessGroupUser: (data: ReqQueryAccessGroupRelation): Promise<Response<PageObject<User>>> => request.post('/api/QueryAccessGroupUser', data),
+  CreateAccessGroupUser: (data: ReqAccessGroupUserRelation): Promise<Response<null>> => request.post('/api/CreateAccessGroupUser', data),
+  DeleteAccessGroupUser: (data: ReqAccessGroupUserRelation): Promise<Response<null>> => request.post('/api/DeleteAccessGroupUser', data),
+  QueryAccessGroupHost: (data: ReqQueryAccessGroupRelation): Promise<Response<PageObject<Host>>> => request.post('/api/QueryAccessGroupHost', data),
+  CreateAccessGroupHost: (data: ReqAccessGroupHostRelation): Promise<Response<null>> => request.post('/api/CreateAccessGroupHost', data),
+  DeleteAccessGroupHost: (data: ReqAccessGroupHostRelation): Promise<Response<null>> => request.post('/api/DeleteAccessGroupHost', data),
+  QueryAccessGroupOsUser: (data: ReqQueryAccessGroupRelation): Promise<Response<PageObject<OsUser>>> => request.post('/api/QueryAccessGroupOsUser', data),
+  CreateAccessGroupOsUser: (data: ReqAccessGroupOsUserRelation): Promise<Response<null>> => request.post('/api/CreateAccessGroupOsUser', data),
+  DeleteAccessGroupOsUser: (data: ReqAccessGroupOsUserRelation): Promise<Response<null>> => request.post('/api/DeleteAccessGroupOsUser', data),
 
   // Audit
   QueryOperationRecord: (data: ReqQueryOperationRecord): Promise<Response<PageObject<OperationRecord>>> => request.post('/api/QueryOperationRecord', data),
