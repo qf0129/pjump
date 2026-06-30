@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Card, Empty, Flex, Input, List, Pagination, Row, Col, Space, Spin, Tag, Typography } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { ExportOutlined, SearchOutlined } from '@ant-design/icons';
 import { Apis } from '@/apis/apis';
 import type { AccessGroup, Host } from '@/utils/type';
 
@@ -13,9 +13,9 @@ export const renderProtocolTags = (host: Host) => {
   const hasVNC = (host.VNCPort ?? 0) > 0;
   return (
     <Space size={0}>
-      {hasSSH && <Tag color="blue">SSH</Tag>}
-      {hasRDP && <Tag color="green">RDP</Tag>}
-      {hasVNC && <Tag color="orange">VNC</Tag>}
+      {hasSSH && <Tag color="#2db7f5">SSH</Tag>}
+      {hasRDP && <Tag color="lime">RDP</Tag>}
+      {hasVNC && <Tag color="volcano">VNC</Tag>}
       {!hasSSH && !hasRDP && !hasVNC && <Tag>未配置</Tag>}
     </Space>
   );
@@ -105,8 +105,8 @@ export default function HostPage() {
   };
 
   return (
-    <Flex style={{ height: '100%', background: '#f5f6f8' }}>
-      <div style={{ width: 260, padding: 16, borderRight: '1px solid #edf0f2', background: '#fff', overflow: 'auto' }}>
+    <Flex style={{ height: '100%', padding: 24 }}>
+      <div style={{ width: 260, padding: 16, borderRight: '1px solid #e0e5e7', overflow: 'auto' }}>
         <Flex align="center" justify="space-between" gap={8} style={{ marginBottom: 12 }}>
           <Typography.Text strong>访问组</Typography.Text>
           {groupSearchOpen ? (
@@ -136,7 +136,7 @@ export default function HostPage() {
               padding: '8px 12px',
               borderRadius: 4,
               marginBottom: 8,
-              background: isAllHostsSelected ? '#e6f4ff' : 'transparent',
+              background: isAllHostsSelected ? '#c6d8fa' : 'transparent',
               borderBottom: '1px solid #f0f0f0',
             }}
           >
@@ -155,7 +155,7 @@ export default function HostPage() {
                     padding: '8px 12px',
                     borderRadius: 4,
                     marginBottom: 4,
-                    background: active ? '#e6f4ff' : 'transparent',
+                    background: active ? '#c6d8fa' : 'transparent',
                     borderBlockEnd: 0,
                   }}
                 >
@@ -194,20 +194,22 @@ export default function HostPage() {
                         <Typography.Text strong ellipsis>
                           {host.Name || '未命名'}
                         </Typography.Text>
-                        {renderProtocolTags(host)}
+                        <Button
+                          variant="solid"
+                          color="primary"
+                          size="small"
+                          onClick={() => window.open('/host/' + host.Uid, '_blank')}
+                          icon={<ExportOutlined />}
+                          iconPlacement="end"
+                        >
+                          连接
+                        </Button>
                       </Flex>
                       <Flex align="center" justify="space-between" style={{ marginTop: 12 }}>
                         <Typography.Text type="secondary" copyable ellipsis>
                           {host.Ip}
                         </Typography.Text>
-                        <Button
-                          color="primary"
-                          variant="filled"
-                          size="small"
-                          onClick={() => window.open('/host/' + host.Uid, '_blank')}
-                        >
-                          连接
-                        </Button>
+                        {renderProtocolTags(host)}
                       </Flex>
                     </Card>
                   </Col>

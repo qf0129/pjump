@@ -170,15 +170,11 @@ export default function AccessGroupPage() {
     { title: '名称', dataIndex: 'Name', width: 180 },
     { title: '描述', dataIndex: 'Description', ellipsis: true },
     {
-      title: '允许登录用户名',
+      title: '限制系统用户',
       dataIndex: 'AllowedOsUsernames',
       width: 220,
       render: (names: string[] = []) =>
-        names.length ? (
-          names.map((name) => <Tag key={name}>{name}</Tag>)
-        ) : (
-          <span style={{ color: '#999' }}>不限制</span>
-        ),
+        names.length ? names.map((name) => <Tag key={name}>{name}</Tag>) : <span style={{ color: '#aaa' }}></span>,
     },
     { title: '过期时间', dataIndex: 'ExpiredAt', width: 180, render: (value?: string) => value || '-' },
     {
@@ -252,11 +248,11 @@ export default function AccessGroupPage() {
           <Form.Item name="Description" label="描述">
             <Input.TextArea rows={3} />
           </Form.Item>
-          <Form.Item name="AllowedOsUsernames" label="允许登录用户名">
-            <Input placeholder="root,dev，不填表示不限制" />
-          </Form.Item>
           <Form.Item name="ExpiredAt" label="过期时间">
             <DatePicker showTime format={DATE_TIME_FORMAT} placeholder="不填表示不过期" style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="AllowedOsUsernames" label="限制系统用户">
+            <Input placeholder="root,dev，不填表示不限制" />
           </Form.Item>
         </Form>
       </Modal>

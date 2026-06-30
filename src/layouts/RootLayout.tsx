@@ -166,9 +166,9 @@ export const RootLayout = () => {
     <Layout style={{ height: '100%' }}>
       <Header
         style={{
-          display: 'flex',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
           alignItems: 'center',
-          justifyContent: 'space-between',
           background: '#fff',
           boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)',
           padding: '0 24px',
@@ -178,7 +178,7 @@ export const RootLayout = () => {
           zIndex: 10,
         }}
       >
-        <Space size={8}>
+        <Space size={8} style={{ minWidth: 0 }}>
           <Link
             to="/"
             style={{
@@ -237,11 +237,13 @@ export const RootLayout = () => {
         >
           <Input prefix={<SearchOutlined />} allowClear placeholder="搜索主机名、地址、IP" variant="filled" />
         </AutoComplete>
-        <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
-          <Button type="text" icon={<UserOutlined />}>
-            {user?.Nickname || user?.Username || '用户'}
-          </Button>
-        </Dropdown>
+        <div style={{ justifySelf: 'end' }}>
+          <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
+            <Button type="text" icon={<UserOutlined />}>
+              {user?.Nickname || user?.Username || '用户'}
+            </Button>
+          </Dropdown>
+        </div>
       </Header>
 
       <Content style={{ height: 'calc(100% - 56px)', overflow: 'auto' }}>
